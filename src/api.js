@@ -1,6 +1,6 @@
 // src/api.js
-import axios from "axios";
 
+import axios from "axios";
 // Crea un'istanza di Axios.
 // Grazie alla configurazione 'proxy' nel tuo vite.config.js,
 // le richieste con percorsi relativi (es. '/auth/login')
@@ -43,9 +43,9 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   try {
     const response = await api.post("/auth/login", credentials);
-    const { token } = response.data;
+    const token = response.data;
     localStorage.setItem("jwtToken", token); // Salva il token JWT in localStorage
-    return response.data; // Restituisce i dati della risposta (es. il token)
+    return token; // Restituisce i dati della risposta (es. il token)
   } catch (error) {
     throw error.response ? error.response.data : error.message;
   }
@@ -179,6 +179,19 @@ export const updateUserRole = async (id, newRole) => {
 
 // --- 4. Metodi per Viaggi (Endpoint: /viaggi) ---
 
+// Carica l'immagine di un viaggio (richiede ruolo AMMINISTRATORE)
+export const uploadViaggioImage = async (id, file) => {
+  const formData = new FormData();
+  formData.append("file", file); // 'file' deve corrispondere al nome del parametro nel backend
+  try {
+    // Axios gestisce automaticamente il Content-Type 'multipart/form-data' per FormData
+    const response = await api.patch(`/viaggi/${id}/immagine`, formData); // Endpoint per l'upload immagine viaggio
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 // Recupera tutti i viaggi
 export const getAllViaggi = async () => {
   try {
@@ -257,6 +270,17 @@ export const getUserBookings = async () => {
 export const cancelBooking = async (bookingId) => {
   try {
     const response = await api.delete(`/prenotazioni/${bookingId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Crea una prenotazione per un hotel (richiede utente loggato)
+export const createHotelBooking = async (bookingData) => {
+  try {
+    // bookingData dovrebbe contenere { hotelId, dataInizio, dataFine, numOspiti }
+    const response = await api.post("/prenotazioni/hotel", bookingData); // Assicurati che l'endpoint sia corretto nel tuo backend
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;

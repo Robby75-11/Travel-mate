@@ -12,6 +12,11 @@ function NavBar() {
   const { isAuthenticated, userRole, handleLogout } = useAuth();
   const navigate = useNavigate(); // Hook per la navigazione programmatica
 
+  // *** RIGA DI DEBUG: INIZIO ***
+  console.log("NavBar Debug - isAuthenticated:", isAuthenticated);
+  console.log("NavBar Debug - userRole:", userRole);
+  // *** RIGA DI DEBUG: FINE ***
+
   // Funzione per gestire il logout
   const onLogout = () => {
     handleLogout(); // Chiama la funzione di logout definita nel contesto
@@ -19,9 +24,9 @@ function NavBar() {
   };
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary shadow-sm">
-      {" "}
-      {/* Aggiunto shadow-sm per un'ombra leggera */}
+    // CAMBIATO: da bg-body-tertiary a bg-primary per un colore di sfondo più deciso
+    // Aggiunto data-bs-theme="dark" per rendere il testo e le icone della navbar chiare
+    <Navbar expand="lg" className="bg-primary shadow-sm" data-bs-theme="dark">
       <Container>
         {/* Logo/Brand della Navbar, usa Link per navigare alla Home */}
         <Navbar.Brand as={Link} to="/">
@@ -34,7 +39,6 @@ function NavBar() {
         {/* Contenuto della Navbar collassabile */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {" "}
             {/* "me-auto" spinge gli elementi a destra */}
             {/* Link di navigazione principali */}
             <Nav.Link as={Link} to="/">
@@ -89,12 +93,13 @@ function NavBar() {
             ) : (
               // Se l'utente È autenticato, mostra il ruolo e il bottone "Logout"
               <>
-                <Navbar.Text className="me-3 text-dark">
-                  {" "}
-                  {/* Aggiunto text-dark per visibilità */}
-                  Loggato come: **{userRole}**
+                {/* CAMBIATO: rimosso text-dark, ora il testo sarà chiaro grazie a data-bs-theme="dark" */}
+                <Navbar.Text className="me-3">
+                  Loggato come: <strong>{userRole}</strong>
                 </Navbar.Text>
-                <Button variant="outline-danger" onClick={onLogout}>
+                <Button variant="outline-light" onClick={onLogout}>
+                  {" "}
+                  {/* CAMBIATO: da outline-danger a outline-light per contrasto */}
                   Logout
                 </Button>
               </>

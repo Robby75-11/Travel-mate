@@ -1,7 +1,113 @@
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif; /* Assicurati che il font Inter sia disponibile o usa un fallback */
+  background-color: #e0e7eb; /* Un grigio-azzurro chiaro per uno sfondo più caldo e meno piatto */
+  /* Puoi provare anche un gradiente più evidente: */
+  /* background: linear-gradient(to bottom, #e0e7eb, #c8d3d9); */
+  min-height: 100vh; /* Assicura che il body occupi almeno l'intera altezza della viewport */
+  color: #343a40; /* Colore del testo leggermente più scuro per una migliore leggibilità */
+}
+
+/* Stile per il div con id="root" */
 #root {
+  /* Questi stili centrano il contenuto e danno un padding */
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+  /* Rimosso text-align: center; qui per permettere un allineamento più flessibile dei contenuti */
 }
 
+/* Stili per i titoli */
+h1, h2, h3, h4, h5, h6 {
+  color: #212529; /* Colore più scuro per i titoli */
+  font-weight: 700; /* Titoli più in grassetto */
+}
+
+/* Rimuovi o modifica lo stile predefinito dei link se necessario */
+a {
+  color: inherit; /* I link ereditano il colore del testo genitore */
+  text-decoration: none; /* Rimuove la sottolineatura predefinita */
+  transition: color 0.3s ease; /* Transizione fluida per il colore */
+}
+
+a:hover {
+  color: #0056b3; /* Colore al passaggio del mouse */
+  text-decoration: underline; /* Aggiunge la sottolineatura al passaggio del mouse */
+}
+
+/* Assicurati che le immagini siano responsive */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Rimuove lo spazio extra sotto le immagini */
+}
+
+/* Stili per i bottoni, se vuoi personalizzarli ulteriormente */
+.btn {
+  border-radius: 0.75rem; /* Bordi più arrotondati per tutti i bottoni di Bootstrap */
+  padding: 0.8rem 1.5rem; /* Padding leggermente maggiore */
+  font-weight: 600;
+  transition: all 0.3s ease; /* Transizioni per tutti gli stati */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra più pronunciata */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+  transform: translateY(-3px); /* Effetto al passaggio del mouse più evidente */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombra più scura al hover */
+}
+
+.btn-outline-primary {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stili per le card */
+.card {
+  border-radius: 1rem; /* Bordi molto più arrotondati per le card */
+  overflow: hidden; /* Assicura che i contenuti arrotondati siano tagliati correttamente */
+  border: none; /* Rimuove il bordo predefinito di Bootstrap se non desiderato */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Ombra più grande e visibile per le card */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transizione per hover */
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Effetto sollevamento al passaggio del mouse */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); /* Ombra ancora più scura al hover */
+}
+
+/* Stili per le icone (se usi Bootstrap Icons o Font Awesome) */
+.bi {
+  vertical-align: -0.125em; /* Allinea le icone al testo */
+  fill: currentColor;
+}
+
+/* Stili specifici per la sezione hero della HomePage */
+.display-4 {
+  font-size: 3.5rem; /* Titolo più grande */
+  margin-bottom: 1.5rem;
+}
+
+.lead {
+  font-size: 1.25rem; /* Testo introduttivo più grande */
+  color: #5a6268; /* Colore del testo leggermente più scuro */
+}
+
+/* Centra il contenuto principale della Home Page */
+.home-page-content {
+  text-align: center;
+}
