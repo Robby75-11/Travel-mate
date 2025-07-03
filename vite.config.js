@@ -10,9 +10,10 @@ export default defineConfig({
       // verranno reindirizzate a http://localhost:8080 (il tuo backend Spring Boot)
       "/auth": "http://localhost:8080",
       "/hotel": "http://localhost:8080",
+      "/prenotazioni": "http://localhost:8080",
       "/utenti": "http://localhost:8080",
       "/viaggi": "http://localhost:8080",
-      "/prenotazioni": "http://localhost:8080",
+
       // Puoi aggiungere anche altri endpoint se ne hai, es:
       // '/api': {
       //   target: 'http://localhost:8080',

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Alert, Spinner, Button } from "react-bootstrap";
 import { getUserBookings, cancelBooking } from "../api.js"; // Importa le funzioni API
 import { useAuth } from "../contexts/AuthContext.jsx"; // Importa il contesto di autenticazione
-import CardViaggio from "../Components/CardViaggio.jsx"; // Riutilizza CardViaggio per visualizzare il viaggio prenotato
+import CardPrenotazione from "../Components/CardPrenotazione.jsx"; // NUOVA IMPORTAZIONE: CardPrenotazione
 import { useNavigate } from "react-router-dom";
 
 function MyBookingsPage() {
@@ -122,32 +122,11 @@ function MyBookingsPage() {
           {/* Griglia responsiva per le card */}
           {bookings.map((booking) => (
             <Col key={booking.id}>
-              {/* Assumi che l'oggetto 'booking' contenga un campo 'viaggio' con i dettagli del viaggio */}
-              {/* Passiamo isBooked=true e la funzione di annullamento */}
-              <CardViaggio
-                viaggio={booking.viaggio} // Passa l'oggetto viaggio associato alla prenotazione
-                isBooked={true} // Indica che è una prenotazione esistente
-                onCancelBooking={handleCancelBooking} // Funzione per annullare la prenotazione
-                // Potresti voler passare l'ID della prenotazione, non del viaggio, alla funzione di annullamento
-                // A seconda di come il tuo backend gestisce l'annullamento (per ID prenotazione o ID viaggio)
-                // Se `onCancelBooking` si aspetta l'ID della prenotazione, passa `booking.id`
-                // onClick={() => handleCancelBooking(booking.id)}
+              {/* Passa l'intero oggetto booking (PrenotazioneResponseDto) al nuovo componente */}
+              <CardPrenotazione
+                prenotazione={booking}
+                onCancelBooking={handleCancelBooking}
               />
-              {/* Puoi aggiungere qui altri dettagli specifici della prenotazione
-                                che non sono inclusi in CardViaggio, come le date effettive
-                                della prenotazione o il numero di passeggeri specifici per questa prenotazione. */}
-              <Card className="mt-2 p-2 text-center bg-light">
-                <small>
-                  Prenotato dal:{" "}
-                  {new Date(booking.dataInizio).toLocaleDateString("it-IT")}
-                </small>
-                <br />
-                <small>
-                  Al: {new Date(booking.dataFine).toLocaleDateString("it-IT")}
-                </small>
-                <br />
-                <small>Passeggeri: {booking.numPasseggeri}</small>
-              </Card>
             </Col>
           ))}
         </Row>

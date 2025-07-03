@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css"; // Importa le icone di Bootstrap
 import NavBar from "./Components/NavBar.jsx";
 import Footer from "./Components/Footer.jsx";
 // Importa il contesto di autenticazione che avvolge tutta l'app
@@ -14,13 +15,15 @@ import HotelListPage from "./Pages/HotelListPage.jsx";
 import ViaggioListPage from "./Pages/ViaggioListPage.jsx";
 import MyBookingsPage from "./Pages/MyBookingsPage.jsx";
 // Pagine del Backoffice (per l'Admin)
+import AdminViaggioManagementPage from "./Pages/admin/AdminViaggioManagementPage.jsx";
 import AdminHotelManagementPage from "./Pages/admin/AdminHotelManagementPage.jsx";
 import AdminUserManagementPage from "./Pages/admin/AdminUserManagementPage.jsx";
-
+import AdminVoloManagementPage from "./Pages/admin/AdminVoloManagementPage.jsx"; // Pagina per la gestione dei voli
 // Nuove pagine da aggiungere per i dettagli/prenotazione di hotel (e ViaggioBookingPage)
 import HotelDetailPage from "./Pages/HotelDetailPage.jsx"; // Pagina per i dettagli di un singolo hotel
 import HotelBookingPage from "./Pages/HotelBookingPage.jsx"; // Pagina per la prenotazione di un hotel
 import ViaggioBookingPage from "./Pages/ViaggioBookingPage.jsx"; // Importa ViaggioBookingPage
+import VoloListPage from "./Pages/VoloListPage.jsx"; // la pagina dei voli
 
 function App() {
   return (
@@ -28,25 +31,21 @@ function App() {
     <AuthProvider>
       {/* Questo div `min-vh-100` e `d-flex flex-column` è per spingere il footer in fondo */}
       <div className="d-flex flex-column min-vh-100">
-        {/* La NavBar è un componente globale, appare su tutte le pagine */}
         <NavBar />
 
         {/* La sezione <main> conterrà il contenuto specifico di ogni pagina */}
         <main className="flex-grow-1">
-          {/* flex-grow-1 fa sì che il main occupi tutto lo spazio rimanente */}
           <Routes>
-            {/* <Routes> è il contenitore principale per tutte le tue rotte */}
-
             {/* Rotta della Home Page: mostrata quando l'URL è "/" */}
             <Route path="/" element={<HomePage />} />
 
-            {/* Rotte di Autenticazione */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
             {/* Rotte per le liste pubbliche di Hotel, Viaggi, ecc. */}
             <Route path="/hotels" element={<HotelListPage />} />
             <Route path="/trips" element={<ViaggioListPage />} />
+            <Route path="/flights" element={<VoloListPage />} />
 
             {/* Rotta per i dettagli di un singolo Hotel (usato da CardHotel) */}
             <Route path="/hotels/:id" element={<HotelDetailPage />} />
@@ -66,7 +65,14 @@ function App() {
               element={<AdminHotelManagementPage />}
             />
             <Route path="/admin/users" element={<AdminUserManagementPage />} />
-            {/* Aggiungi qui altre rotte per il backoffice */}
+            <Route
+              path="/admin/trips"
+              element={<AdminViaggioManagementPage />}
+            />
+            <Route
+              path="/admin/flights"
+              element={<AdminVoloManagementPage />}
+            />
           </Routes>
         </main>
 

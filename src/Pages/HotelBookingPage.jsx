@@ -3,6 +3,7 @@ import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx"; // per verificare se l'utente è autenticato
 import { getHotelById, createHotelBooking } from "../api.js"; // Importa la funzione API per ottenere gli hotel disponibili
 import { useParams, useNavigate } from "react-router-dom"; // useParams per l'ID dell'hotel dall'URL
+import { Card, Form, Button } from "react-bootstrap";
 
 function HotelBookingPage() {
   //Id dell'hotel dall'URL
@@ -16,7 +17,7 @@ function HotelBookingPage() {
   const [bookingData, setBookingData] = useState({
     dataInizio: "",
     dataFine: "",
-    numeroPersone: 1,
+    numOspiti: 1,
   });
   //Stati per caricamento,  messaggi di errore o successo
   const [loading, setLoading] = useState(true);

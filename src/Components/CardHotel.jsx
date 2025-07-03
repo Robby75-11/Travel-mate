@@ -1,4 +1,3 @@
-// src/Components/CardHotel.jsx
 import React from "react";
 import { Card, Button, Carousel } from "react-bootstrap"; // Importa Carousel
 import { Link } from "react-router-dom";

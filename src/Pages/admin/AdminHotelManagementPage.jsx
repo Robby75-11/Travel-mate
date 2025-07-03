@@ -10,10 +10,7 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-// PERCORSO CORRETTO: Risale di due livelli (da admin/ a Pages/, poi a src/) e poi entra in Api/Api.js
-// NOTA: Se il tuo file api.js è direttamente in src/, il percorso dovrebbe essere '../../api.js'
-// Ho mantenuto il percorso precedente '../../../Api/Api.js' basandomi sull'ultima versione fornita.
-// Se hai spostato api.js in src/, correggi questa riga in: import { getAllHotels, createHotel, updateHotel, deleteHotel, uploadHotelImage } from '../../api.js';
+
 import {
   getAllHotels,
   createHotel,
@@ -34,8 +31,9 @@ function AdminHotelManagementPage() {
     // Stato per i dati del form del modale
     nome: "",
     indirizzo: "",
+    citta: "",
     descrizione: "",
-    prezzoPerNotte: "",
+    prezzoNotte: "",
     immagineUrl: "", // Campo per l'URL dell'immagine esistente
   });
   const [imageFile, setImageFile] = useState(null); // Stato per il file immagine da caricare
@@ -82,8 +80,9 @@ function AdminHotelManagementPage() {
     setFormData({
       nome: hotel ? hotel.nome : "",
       indirizzo: hotel ? hotel.indirizzo : "",
+      citta: hotel ? hotel.citta : "",
       descrizione: hotel ? hotel.descrizione : "",
-      prezzoPerNotte: hotel ? hotel.prezzoPerNotte : "",
+      prezzoNotte: hotel ? hotel.prezzoPerNotte : "",
       immagineUrl: hotel ? hotel.immagineUrl : "", // Popola l'URL esistente
     });
     setImageFile(null); // Resetta il file immagine
@@ -97,8 +96,9 @@ function AdminHotelManagementPage() {
     setFormData({
       nome: "",
       indirizzo: "",
+      citta: "",
       descrizione: "",
-      prezzoPerNotte: "",
+      prezzoNotte: "",
       immagineUrl: "",
     });
     setImageFile(null);
@@ -125,8 +125,9 @@ function AdminHotelManagementPage() {
       let hotelDataToSend = {
         nome: formData.nome,
         indirizzo: formData.indirizzo,
+        citta: formData.citta,
         descrizione: formData.descrizione,
-        prezzoPerNotte: parseFloat(formData.prezzoPerNotte), // Assicurati che sia un numero
+        prezzoNotte: parseFloat(formData.prezzoNotte), // Assicurati che sia un numero
       };
 
       let savedHotel;
@@ -218,7 +219,7 @@ function AdminHotelManagementPage() {
               <th>Indirizzo</th>
               <th>Prezzo/Notte</th>
               <th>Immagine</th>
-              <th>Azioni</th>
+              <th>citta</th>
             </tr>
           </thead>
           <tbody>
@@ -227,7 +228,8 @@ function AdminHotelManagementPage() {
                 <td>{hotel.id}</td>
                 <td>{hotel.nome}</td>
                 <td>{hotel.indirizzo}</td>
-                <td>€ {hotel.prezzoPerNotte?.toFixed(2)}</td>
+                <td>{hotel.citta}</td>
+                <td>€ {hotel.prezzoNotte?.toFixed(2)}</td>
                 <td>
                   {hotel.immagineUrl ? (
                     <img
@@ -293,6 +295,16 @@ function AdminHotelManagementPage() {
                 required
               />
             </Form.Group>
+            <Form.Group className="mb-3" controlId="formCitta">
+              <Form.Label>citta</Form.Label>
+              <Form.Control
+                type="text"
+                name="citta"
+                value={formData.citta}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
             <Form.Group className="mb-3" controlId="formIndirizzo">
               <Form.Label>Indirizzo</Form.Label>
               <Form.Control
@@ -314,11 +326,11 @@ function AdminHotelManagementPage() {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formPrezzoPerNotte">
+            <Form.Group className="mb-3" controlId="formPrezzoNotte">
               <Form.Label>Prezzo per Notte</Form.Label>
               <Form.Control
                 type="number"
-                name="prezzoPerNotte"
+                name="prezzoNotte"
                 value={formData.prezzoPerNotte}
                 onChange={handleChange}
                 required

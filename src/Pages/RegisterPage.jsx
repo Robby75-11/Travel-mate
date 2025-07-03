@@ -1,13 +1,13 @@
-import React, { useState } from "react"; // Assicurati che useState sia importato qui
+import React, { useState } from "react";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap"; // Importa i componenti Bootstrap
-import { registerUser } from "../api.js"; // Importa la funzione API per la registrazione
+import { registerUser } from "../api"; // Importa la funzione API per la registrazione
 import { useNavigate } from "react-router-dom"; // Per reindirizzare l'utente dopo la registrazione
 
 function RegisterPage() {
   // Stato per gestire i dati del form
   const [formData, setFormData] = useState({
-    nome: "",
-    cognome: "",
+    nome: "", // Modificato da 'username' a 'nome'
+    cognome: "", // Aggiunto campo 'cognome'
     email: "",
     password: "",
     confirmPassword: "",

@@ -14,7 +14,7 @@ function LoginPage() {
   const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate(); // Hook per la navigazione programmatica
-  const { handleLogin } = useAuth(); //  la funzione handleLogin dal contesto di autenticazione
+  const { handleLogin } = useAuth(); // Ottieni la funzione handleLogin dal contesto di autenticazione
 
   // Funzione per aggiornare lo stato del form al cambiamento degli input
   const handleChange = (e) => {

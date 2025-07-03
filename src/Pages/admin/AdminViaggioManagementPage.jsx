@@ -9,13 +9,14 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
+// Assicurati di avere uploadViaggioImage in api.js
 import {
   getAllViaggi,
   createViaggio,
   updateViaggio,
   deleteViaggio,
   uploadViaggioImage,
-} from "../../api.js"; // Assicurati di avere uploadViaggioImage in api.js
+} from "../../api.js";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -46,7 +47,7 @@ function AdminViaggioManagementPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllViaggi();
+      const data = await getAllViaggi(); // Ora restituisce List<ViaggioResponseDto>
       setViaggi(data);
     } catch (err) {
       console.error("Errore nel recuperare i viaggi:", err);
@@ -75,8 +76,13 @@ function AdminViaggioManagementPage() {
     setCurrentViaggio(viaggio);
     setFormData({
       destinazione: viaggio ? viaggio.destinazione : "",
-      dataPartenza: viaggio ? viaggio.dataPartenza.split("T")[0] : "", // Formatta per input type="date"
-      dataRitorno: viaggio ? viaggio.dataRitorno.split("T")[0] : "", // Formatta per input type="date"
+      // Formatta le date per l'input type="date" (solo la parte YYYY-MM-DD)
+      dataPartenza:
+        viaggio && viaggio.dataPartenza
+          ? viaggio.dataPartenza.split("T")[0]
+          : "",
+      dataRitorno:
+        viaggio && viaggio.dataRitorno ? viaggio.dataRitorno.split("T")[0] : "",
       descrizione: viaggio ? viaggio.descrizione : "",
       prezzo: viaggio ? viaggio.prezzo : "",
       immagineUrl: viaggio ? viaggio.immagineUrl : "", // Popola l'URL esistente
@@ -118,18 +124,19 @@ function AdminViaggioManagementPage() {
     setModalMessage("");
 
     try {
+      // I campi di formData corrispondono ai campi dell'entità Viaggio
       let viaggioDataToSend = {
         destinazione: formData.destinazione,
-        dataPartenza: formData.dataPartenza, // Le date sono già in formato YYYY-MM-DD
+        dataPartenza: formData.dataPartenza,
         dataRitorno: formData.dataRitorno,
         descrizione: formData.descrizione,
-        prezzo: parseFloat(formData.prezzo), // Assicurati che sia un numero
+        prezzo: parseFloat(formData.prezzo),
       };
 
-      let savedViaggio;
+      let savedViaggio; // Questo sarà un ViaggioResponseDto
       if (currentViaggio) {
         // Modifica viaggio esistente
-        viaggioDataToSend.id = currentViaggio.id; // Assicurati di inviare l'ID per l'update
+        viaggioDataToSend.id = currentViaggio.id;
         savedViaggio = await updateViaggio(
           currentViaggio.id,
           viaggioDataToSend
@@ -141,7 +148,7 @@ function AdminViaggioManagementPage() {
 
       // Se c'è un file immagine, caricalo
       if (imageFile) {
-        await uploadViaggioImage(savedViaggio.id, imageFile); // Chiama la nuova funzione di upload
+        await uploadViaggioImage(savedViaggio.id, imageFile);
       }
 
       setModalMessage("Viaggio salvato con successo!");
@@ -224,11 +231,16 @@ function AdminViaggioManagementPage() {
               <tr key={viaggio.id}>
                 <td>{viaggio.id}</td>
                 <td>{viaggio.destinazione}</td>
+                {/* Formatta le date per la visualizzazione */}
                 <td>
-                  {new Date(viaggio.dataPartenza).toLocaleDateString("it-IT")}
+                  {viaggio.dataPartenza
+                    ? new Date(viaggio.dataPartenza).toLocaleDateString("it-IT")
+                    : "N/A"}
                 </td>
                 <td>
-                  {new Date(viaggio.dataRitorno).toLocaleDateString("it-IT")}
+                  {viaggio.dataRitorno
+                    ? new Date(viaggio.dataRitorno).toLocaleDateString("it-IT")
+                    : "N/A"}
                 </td>
                 <td>€ {viaggio.prezzo?.toFixed(2)}</td>
                 <td>
