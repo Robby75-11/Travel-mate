@@ -1,9 +1,4 @@
-// src/api.js
-
 import axios from "axios";
-// Crea un'istanza di Axios.
-// Grazie alla configurazione 'proxy' nel tuo vite.config.js,
-// le richieste con percorsi relativi (es. '/auth/login')
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
   headers: {
@@ -248,7 +243,7 @@ export const deleteViaggio = async (id) => {
 export const createViaggioBooking = async (bookingData) => {
   try {
     // bookingData dovrebbe contenere { viaggioId, dataInizio, dataFine, numPasseggeri }
-    const response = await api.post("/prenotazioni/viaggio", bookingData);
+    const response = await api.post("/prenotazioni/", bookingData);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -259,7 +254,7 @@ export const createViaggioBooking = async (bookingData) => {
 export const getUserBookings = async () => {
   try {
     // L'endpoint dovrebbe recuperare le prenotazioni basate sull'utente loggato (dal JWT)
-    const response = await api.get("/prenotazioni/mie");
+    const response = await api.get("/prenotazioni");
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -280,12 +275,100 @@ export const cancelBooking = async (bookingId) => {
 export const createHotelBooking = async (bookingData) => {
   try {
     // bookingData dovrebbe contenere { hotelId, dataInizio, dataFine, numOspiti }
-    const response = await api.post("/prenotazioni/hotel", bookingData); // Assicurati che l'endpoint sia corretto nel tuo backend
+    const response = await api.post("/prenotazioni/", bookingData); // Assicurati che l'endpoint sia corretto nel tuo backend
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
   }
 };
 
-// Esporta l'istanza di Axios configurata per un uso diretto se necessario (meno comune)
+// --- 6. Metodi per Voli (Endpoint: /voli) ---
+
+// Recupera tutti i voli
+export const getAllVoli = async () => {
+  try {
+    const response = await api.get("/voli");
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Recupera un volo tramite ID
+export const getVoloById = async (id) => {
+  try {
+    const response = await api.get(`/voli/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Prenota un volo (richiede utente loggato)
+export const prenotaVolo = async (prenotazione) => {
+  const token = localStorage.getItem("token");
+
+  // Se il token non è presente, blocca la richiesta
+  if (!token) {
+    throw new Error("Utente non autenticato. Effettua il login.");
+  }
+
+  const response = await fetch("/prenotazioni", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+    body: JSON.stringify(prenotazione),
+  });
+
+  if (!response.ok) {
+    throw new Error("Errore nella prenotazione del volo");
+  }
+
+  return await response.json();
+};
+
+// Crea un nuovo volo (richiede ruolo AMMINISTRATORE)
+export const createVoloBooking = async (voloData) => {
+  try {
+    const response = await api.post("/voli", voloData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Aggiorna un volo tramite ID (richiede ruolo AMMINISTRATORE)
+export const updateVolo = async (id, voloData) => {
+  try {
+    const response = await api.put(`/voli/${id}`, voloData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Elimina un volo tramite ID (richiede ruolo AMMINISTRATORE)
+export const deleteVolo = async (id) => {
+  try {
+    const response = await api.delete(`/voli/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+// Carica l'immagine di un volo (es. aereo o tratta visiva)
+export const uploadVoloImage = async (id, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  try {
+    const response = await api.patch(`/voli/${id}/immagine`, formData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 export default api;

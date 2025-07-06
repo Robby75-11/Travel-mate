@@ -8,14 +8,35 @@ import {
   Button,
   Spinner,
   Alert,
+  Form,
 } from "react-bootstrap";
-import { getHotelById } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
+import { getHotelById, uploadHotelImage } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
 
 function HotelDetailPage() {
   const { id } = useParams(); // Ottiene l'ID dell'hotel dall'URL (es. /hotels/123 -> id = "123")
   const [hotel, setHotel] = useState(null); // Stato per i dettagli dell'hotel
   const [loading, setLoading] = useState(true); // Stato per il caricamento
   const [error, setError] = useState(null); // Stato per gli errori
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async () => {
+    if (!selectedFiles.length) return;
+
+    const file = selectedFiles[0]; // Prendiamo il primo file selezionato
+    setUploading(true);
+
+    try {
+      const updatedHotel = await uploadHotelImage(id, file);
+      setHotel(updatedHotel); // Aggiorna l’hotel con la nuova immagine
+      setSelectedFiles([]); // Reset del file selezionato
+    } catch (err) {
+      alert("Errore durante l'upload dell'immagine.");
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchHotelDetails = async () => {
@@ -89,12 +110,12 @@ function HotelDetailPage() {
                   <img
                     src={hotel.immagineUrl}
                     alt={`Immagine di ${hotel.nome}`}
-                    className="img-fluid rounded" // Rende l'immagine responsiva e con bordi arrotondati
+                    className="img-fluid rounded"
                     style={{
                       maxHeight: "400px",
                       objectFit: "cover",
                       width: "100%",
-                    }} // Stile per l'immagine
+                    }}
                   />
                 </div>
               )}
@@ -104,7 +125,7 @@ function HotelDetailPage() {
               <p>{hotel.descrizione}</p>
               <hr />
               <h4 className="text-primary text-center mb-4">
-                Prezzo per notte: € {hotel.prezzoPerNotte?.toFixed(2) || "N/A"}
+                PrezzoNotte: € {hotel.prezzoNotte?.toFixed(2)}
               </h4>
 
               <div className="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">

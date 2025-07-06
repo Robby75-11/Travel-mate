@@ -32,6 +32,7 @@ function AdminUserManagementPage() {
     setError(null);
     try {
       const data = await getAllUsers();
+      console.log("Risposta getAllUsers:", data);
       setUsers(data);
     } catch (err) {
       console.error("Errore nel recuperare gli utenti:", err);
@@ -165,8 +166,8 @@ function AdminUserManagementPage() {
                 <td>{user.nome}</td>
                 <td>{user.cognome}</td>
                 <td>{user.email}</td>
-                <td>{user.ruolo}</td>{" "}
-                {/* Assumi che il backend restituisca il ruolo come stringa (es. "UTENTE", "AMMINISTRATORE") */}
+                <td>{user.ruolo}</td>
+
                 <td>
                   <Button
                     variant="warning"
@@ -234,7 +235,7 @@ function AdminUserManagementPage() {
                     size="sm"
                     role="status"
                     aria-hidden="true"
-                  />{" "}
+                  />
                   Salvataggio...
                 </>
               ) : (

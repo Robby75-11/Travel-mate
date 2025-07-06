@@ -20,14 +20,14 @@ function AdminVoloManagementPage() {
   const [showModal, setShowModal] = useState(false);
   const [currentVolo, setCurrentVolo] = useState(null);
   const [formData, setFormData] = useState({
-    // Campi per la gestione dei voli (es. numeroVolo, compagniaAerea, dataOraPartenza, dataOraArrivo, aeroportoPartenza, aeroportoArrivo, prezzo)
+    // Campi per la gestione dei voli (es. numeroVolo, compagniaAerea, dataOraPartenza, dataOraArrivo, aeroportoPartenza, aeroportoArrivo, costoVolo)
     numeroVolo: "",
     compagniaAerea: "",
     dataOraPartenza: "",
     dataOraArrivo: "",
     aeroportoPartenza: "",
     aeroportoArrivo: "",
-    prezzo: "",
+    costoVolo: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -77,7 +77,7 @@ function AdminVoloManagementPage() {
       dataOraArrivo: volo ? volo.dataOraArrivo.split("T")[0] : "", // Formatta per input type="date"
       aeroportoPartenza: volo ? volo.aeroportoPartenza : "",
       aeroportoArrivo: volo ? volo.aeroportoArrivo : "",
-      prezzo: volo ? volo.prezzo : "",
+      costoVolo: volo ? volo.costoVolo : "",
     });
     setModalMessage("");
     setShowModal(true);
@@ -93,7 +93,7 @@ function AdminVoloManagementPage() {
       dataOraArrivo: "",
       aeroportoPartenza: "",
       aeroportoArrivo: "",
-      prezzo: "",
+      costoVolo: "",
     });
   };
 
@@ -191,7 +191,7 @@ function AdminVoloManagementPage() {
               <th>Compagnia</th>
               <th>Partenza</th>
               <th>Arrivo</th>
-              <th>Prezzo</th>
+              <th>costoVolo</th>
               <th>Azioni</th>
             </tr>
           </thead>
@@ -205,7 +205,7 @@ function AdminVoloManagementPage() {
                   {new Date(volo.dataOraPartenza).toLocaleString("it-IT")}
                 </td>
                 <td>{new Date(volo.dataOraArrivo).toLocaleString("it-IT")}</td>
-                <td>€ {volo.prezzo?.toFixed(2)}</td>
+                <td>€ {volo.costoVolo?.toFixed(2)}</td>
                 <td>
                   <Button
                     variant="warning"
@@ -305,41 +305,39 @@ function AdminVoloManagementPage() {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formPrezzo">
+            <Form.Group className="mb-3" controlId="formcostoVolo">
               <Form.Label>Prezzo</Form.Label>
               <Form.Control
                 type="number"
-                name="prezzo"
-                value={formData.prezzo}
+                step="0.01"
+                name="costoVolo"
+                value={formData.costoVolo}
                 onChange={handleChange}
                 required
-                step="0.01"
               />
             </Form.Group>
 
-            {/* Non c'è un campo immagine per i voli in questo placeholder, ma puoi aggiungerlo se necessario */}
-
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-100"
-              disabled={submitting}
-            >
-              {submitting ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  />{" "}
-                  Salvataggio...
-                </>
-              ) : (
-                "Salva Volo"
-              )}
-            </Button>
+            <div className="d-flex justify-content-end">
+              <Button
+                variant="secondary"
+                onClick={handleCloseModal}
+                className="me-2"
+              >
+                Annulla
+              </Button>
+              <Button type="submit" variant="primary" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Salvataggio...
+                  </>
+                ) : currentVolo ? (
+                  "Salva Modifiche"
+                ) : (
+                  "Aggiungi Volo"
+                )}
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>

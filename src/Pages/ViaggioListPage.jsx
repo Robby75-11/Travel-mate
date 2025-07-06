@@ -15,7 +15,6 @@ function ViaggioListPage() {
         const data = await getAllViaggi(); // Chiama l'API per ottenere tutti i viaggi
         setViaggi(data);
       } catch (err) {
-        console.error("Errore nel recuperare i viaggi:", err);
         setError("Impossibile caricare i viaggi. Riprova più tardi.");
       } finally {
         setLoading(false); // Imposta loading a false indipendentemente dal successo o fallimento

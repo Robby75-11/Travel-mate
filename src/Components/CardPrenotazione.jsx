@@ -73,9 +73,7 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
       </p>
     );
     details.push(
-      <p key="hotel-prezzo">
-        Prezzo per notte: € {hotelPrezzoNotte?.toFixed(2) || "N/A"}
-      </p>
+      <p key="hotel-prezzo">Prezzonotte: € {hotelPrezzoNotte?.toFixed(2)}</p>
     );
     linkToDetails = hotelId ? `/hotels/${hotelId}` : null;
   } else if (bookingType === "Viaggio") {
@@ -151,16 +149,14 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
           Tipo: {bookingType} | Stato: {statoPrenotazione}
         </Card.Subtitle>
         <Card.Text className="flex-grow-1">
-          <p>Prenotato il: {displayDataPrenotazione}</p>
-          <p>
-            Periodo: dal {displayDateInizio} al {displayDateFine}
-          </p>
+          Prenotato il: {displayDataPrenotazione}
+          Periodo: dal {displayDateInizio} al {displayDateFine}
           {details}
         </Card.Text>
 
         <div className="mt-auto">
           <h5 className="text-primary mb-3">
-            Prezzo Totale: € {prezzo?.toFixed(2) || "N/A"}
+            Prezzo Totale: € {prezzo?.toFixed(2)}
           </h5>
 
           <div className="d-flex justify-content-between">

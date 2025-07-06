@@ -1,13 +1,12 @@
 import React from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css"; // Importa le icone di Bootstrap
+import "bootstrap-icons/font/bootstrap-icons.css";
 import NavBar from "./Components/NavBar.jsx";
 import Footer from "./Components/Footer.jsx";
 // Importa il contesto di autenticazione che avvolge tutta l'app
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { Routes, Route } from "react-router-dom";
-// Importa le tue "Pagine" (assicurati delle estensioni .jsx per tutti i componenti React)
 import HomePage from "./Pages/HomePage.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import RegisterPage from "./Pages/RegisterPage.jsx";
@@ -24,6 +23,9 @@ import HotelDetailPage from "./Pages/HotelDetailPage.jsx"; // Pagina per i detta
 import HotelBookingPage from "./Pages/HotelBookingPage.jsx"; // Pagina per la prenotazione di un hotel
 import ViaggioBookingPage from "./Pages/ViaggioBookingPage.jsx"; // Importa ViaggioBookingPage
 import VoloListPage from "./Pages/VoloListPage.jsx"; // la pagina dei voli
+import VoloBookingPage from "./Pages/VoloBookingPage.jsx"; // Pagina per la prenotazione di un volo
+import ViaggioDetailPage from "./Pages/ViaggioDetailPage.jsx"; // Pagina per i dettagli di un singolo viaggio
+import RecensionePage from "./Pages/RecensionePage.jsx"; // Pagina per le recensioni dei viaggi
 
 function App() {
   return (
@@ -49,13 +51,15 @@ function App() {
 
             {/* Rotta per i dettagli di un singolo Hotel (usato da CardHotel) */}
             <Route path="/hotels/:id" element={<HotelDetailPage />} />
-
+            <Route path="/trips/:id" element={<ViaggioDetailPage />} />
             {/* Rotta per la prenotazione di un Hotel (usato da CardHotel) */}
             <Route path="/book-hotel/:id" element={<HotelBookingPage />} />
 
             {/* Rotta per la prenotazione di un Viaggio (usato da CardViaggio) */}
             <Route path="/book-trip/:id" element={<ViaggioBookingPage />} />
 
+            {/* Rotta per la prenotazione di un Volo */}
+            <Route path="/flights/:id/prenota" element={<VoloBookingPage />} />
             {/* Rotta per le prenotazioni dell'utente loggato */}
             <Route path="/my-bookings" element={<MyBookingsPage />} />
 

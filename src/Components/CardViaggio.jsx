@@ -13,7 +13,7 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
     dataRitorno,
     descrizione,
     immagineUrl,
-    prezzo,
+    costoViaggio,
   } = viaggio;
 
   const formattedDataPartenza = new Date(dataPartenza).toLocaleDateString(
@@ -44,11 +44,8 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
         </Card.Text>
 
         <div className="mt-auto">
-          {" "}
-          {/* Spinge gli elementi sottostanti verso il fondo della card */}
-          {/* Prezzo */}
           <h5 className="text-primary mb-3">
-            € {prezzo ? prezzo.toFixed(2) : "N/A"}
+            CostoViaggio: € {costoViaggio.toFixed(2)}
           </h5>
           {/* Sezione Bottoni e Stato */}
           <div className="d-flex justify-content-between align-items-center">
@@ -66,16 +63,23 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
                     Annulla Prenotazione
                   </Button>
                 )}
-                {/* Qui potresti aggiungere un bottone "Vedi Dettagli Prenotazione" */}
               </>
             ) : (
               // Mostra se il viaggio è disponibile per la prenotazione (es. in ViaggioListPage)
               <>
+                {/* Bottone "Vedi Dettagli" */}
+                <Button
+                  as={Link}
+                  to={`/trips/${id}`}
+                  variant="outline-warning"
+                  className="ms-2"
+                >
+                  Vedi Dettagli
+                </Button>
                 {/* Bottone "Prenota Ora" che porta alla pagina di prenotazione specifica */}
                 <Button as={Link} to={`/book-trip/${id}`} variant="primary">
                   Prenota Ora
                 </Button>
-                {/* Qui potresti aggiungere un bottone "Vedi Descrizione" per un modale o una pagina dettagli */}
               </>
             )}
           </div>

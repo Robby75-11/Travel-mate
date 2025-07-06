@@ -111,6 +111,8 @@ function ViaggioBookingPage() {
         numPasseggeri: parseInt(bookingData.numPasseggeri, 10), // Assicurati che sia un numero
       };
 
+      console.log("Dati prenotazione inviati all'API:", bookingPayload);
+
       await createViaggioBooking(bookingPayload);
 
       setMessage(
@@ -181,7 +183,7 @@ function ViaggioBookingPage() {
               </p>
               <p>{viaggio.descrizione}</p>
               <h5 className="text-primary">
-                Prezzo: € {viaggio.prezzo?.toFixed(2) || "N/A"}
+                CostoViaggio: € {viaggio.costoViaggio?.toFixed(2) || "N/A"}
               </h5>
             </div>
           )}

@@ -1,5 +1,5 @@
 // src/Pages/admin/AdminViaggioManagementPage.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import react, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Table,
@@ -32,7 +32,7 @@ function AdminViaggioManagementPage() {
     dataPartenza: "",
     dataRitorno: "",
     descrizione: "",
-    prezzo: "",
+    costoViaggio: "",
     immagineUrl: "", // Campo per l'URL dell'immagine esistente
   });
   const [imageFile, setImageFile] = useState(null); // Stato per il file immagine da caricare
@@ -84,7 +84,7 @@ function AdminViaggioManagementPage() {
       dataRitorno:
         viaggio && viaggio.dataRitorno ? viaggio.dataRitorno.split("T")[0] : "",
       descrizione: viaggio ? viaggio.descrizione : "",
-      prezzo: viaggio ? viaggio.prezzo : "",
+      costoViaggio: viaggio ? viaggio.costoViaggio : "",
       immagineUrl: viaggio ? viaggio.immagineUrl : "", // Popola l'URL esistente
     });
     setImageFile(null); // Resetta il file immagine
@@ -100,7 +100,7 @@ function AdminViaggioManagementPage() {
       dataPartenza: "",
       dataRitorno: "",
       descrizione: "",
-      prezzo: "",
+      costoViaggio: "",
       immagineUrl: "",
     });
     setImageFile(null);
@@ -130,7 +130,7 @@ function AdminViaggioManagementPage() {
         dataPartenza: formData.dataPartenza,
         dataRitorno: formData.dataRitorno,
         descrizione: formData.descrizione,
-        prezzo: parseFloat(formData.prezzo),
+        costoViaggio: parseFloat(formData.costoViaggio),
       };
 
       let savedViaggio; // Questo sarà un ViaggioResponseDto
@@ -221,7 +221,7 @@ function AdminViaggioManagementPage() {
               <th>Destinazione</th>
               <th>Partenza</th>
               <th>Ritorno</th>
-              <th>Prezzo</th>
+              <th>costoViaggio</th>
               <th>Immagine</th>
               <th>Azioni</th>
             </tr>
@@ -242,7 +242,7 @@ function AdminViaggioManagementPage() {
                     ? new Date(viaggio.dataRitorno).toLocaleDateString("it-IT")
                     : "N/A"}
                 </td>
-                <td>€ {viaggio.prezzo?.toFixed(2)}</td>
+                <td>€ {viaggio.costoViaggio.toFixed(2)}</td>
                 <td>
                   {viaggio.immagineUrl ? (
                     <img
@@ -340,10 +340,10 @@ function AdminViaggioManagementPage() {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formPrezzo">
-              <Form.Label>Prezzo</Form.Label>
+              <Form.Label>costoViaggio</Form.Label>
               <Form.Control
                 type="number"
-                name="prezzo"
+                name="costoViaggio"
                 value={formData.prezzo}
                 onChange={handleChange}
                 required

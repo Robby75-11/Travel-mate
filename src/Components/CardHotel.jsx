@@ -1,18 +1,16 @@
 import React from "react";
-import { Card, Button, Carousel } from "react-bootstrap"; // Importa Carousel
+import { Card, Button, Carousel } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 // La prop 'hotel' conterrà tutti i dettagli dell'hotel, inclusa immagineUrls (array)
 function CardHotel({ hotel }) {
-  const { id, nome, indirizzo, descrizione, immagineUrls, prezzoPerNotte } =
-    hotel; // CAMBIATO: da immagineUrl a immagineUrls
+  const { id, nome, indirizzo, descrizione, immagineUrl, prezzoNotte } = hotel;
 
   // Determina le immagini da mostrare. Se immagineUrls non è un array o è vuoto, usa un placeholder.
   const imagesToDisplay =
-    Array.isArray(immagineUrls) && immagineUrls.length > 0
-      ? immagineUrls
-      : ["https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine"]; // Placeholder
-
+    typeof immagineUrl === "string" && immagineUrl.trim() !== ""
+      ? [immagineUrl]
+      : ["https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine"];
   return (
     <Card className="h-100 shadow-sm">
       {" "}
@@ -58,8 +56,7 @@ function CardHotel({ hotel }) {
             verso il fondo della card, mantenendo il layout pulito */}
         <div className="mt-auto">
           <h5 className="text-primary mb-3">
-            € {prezzoPerNotte ? prezzoPerNotte.toFixed(2) : "N/A"} / notte{" "}
-            {/* Prezzo per notte */}
+            <p>PrezzoNotte: € {prezzoNotte.toFixed(2)} </p>
           </h5>
 
           <div className="d-flex justify-content-between">

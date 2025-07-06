@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
-  Row,
-  Col,
   Table,
   Button,
   Spinner,
@@ -10,7 +8,6 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-
 import {
   getAllHotels,
   createHotel,
@@ -22,41 +19,40 @@ import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 function AdminHotelManagementPage() {
-  const [hotels, setHotels] = useState([]); // Stato per la lista degli hotel
-  const [loading, setLoading] = useState(true); // Stato per il caricamento
-  const [error, setError] = useState(null); // Stato per gli errori
-  const [showModal, setShowModal] = useState(false); // Stato per mostrare/nascondere il modale
-  const [currentHotel, setCurrentHotel] = useState(null); // Hotel attualmente in modifica (null per nuovo)
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [currentHotel, setCurrentHotel] = useState(null);
   const [formData, setFormData] = useState({
-    // Stato per i dati del form del modale
     nome: "",
     indirizzo: "",
     citta: "",
     descrizione: "",
     prezzoNotte: "",
-    immagineUrl: "", // Campo per l'URL dell'immagine esistente
   });
-  const [imageFile, setImageFile] = useState(null); // Stato per il file immagine da caricare
-  const [submitting, setSubmitting] = useState(false); // Stato per l'invio del form
-  const [modalMessage, setModalMessage] = useState(""); // Messaggi nel modale
+  const [imageFileOnForm, setImageFileOnForm] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [formMessage, setFormMessage] = useState("");
+
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [hotelForImage, setHotelForImage] = useState(null);
+  const [imageToUpload, setImageToUpload] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
 
   const { userRole, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Funzione per recuperare tutti gli hotel
   const fetchHotels = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await getAllHotels();
-      // CORREZIONE: Assicurati che 'data' sia un array. Se non lo è, usa un array vuoto.
       setHotels(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Errore nel recuperare gli hotel:", err);
-      setError(
-        "Impossibile caricare gli hotel. Accesso negato o errore di rete."
-      );
-      setHotels([]); // Imposta a un array vuoto anche in caso di errore
+      setError("Errore nel caricare gli hotel.");
     } finally {
       setLoading(false);
     }
@@ -64,322 +60,289 @@ function AdminHotelManagementPage() {
 
   useEffect(() => {
     if (!isAuthenticated || userRole !== "AMMINISTRATORE") {
-      setError(
-        "Accesso negato. Solo gli amministratori possono accedere a questa pagina."
-      );
-      setLoading(false);
-      setTimeout(() => navigate("/login"), 2000); // Reindirizza al login
-      return;
+      setError("Accesso negato.");
+      setTimeout(() => navigate("/login"), 2000);
+    } else {
+      fetchHotels();
     }
-    fetchHotels();
   }, [isAuthenticated, userRole, navigate, fetchHotels]);
 
-  // Gestione apertura/chiusura modale
-  const handleShowModal = (hotel = null) => {
+  // Form modal handlers
+  const openFormModal = (hotel = null) => {
     setCurrentHotel(hotel);
     setFormData({
-      nome: hotel ? hotel.nome : "",
-      indirizzo: hotel ? hotel.indirizzo : "",
-      citta: hotel ? hotel.citta : "",
-      descrizione: hotel ? hotel.descrizione : "",
-      prezzoNotte: hotel ? hotel.prezzoPerNotte : "",
-      immagineUrl: hotel ? hotel.immagineUrl : "", // Popola l'URL esistente
+      nome: hotel?.nome || "",
+      indirizzo: hotel?.indirizzo || "",
+      citta: hotel?.citta || "",
+      descrizione: hotel?.descrizione || "",
+      prezzoNotte: hotel?.prezzoNotte || "",
     });
-    setImageFile(null); // Resetta il file immagine
-    setModalMessage("");
-    setShowModal(true);
+    setImageFileOnForm(null);
+    setFormMessage("");
+    setShowFormModal(true);
   };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const closeFormModal = () => {
+    setShowFormModal(false);
     setCurrentHotel(null);
-    setFormData({
-      nome: "",
-      indirizzo: "",
-      citta: "",
-      descrizione: "",
-      prezzoNotte: "",
-      immagineUrl: "",
-    });
-    setImageFile(null);
   };
-
-  // Gestione input del form
-  const handleChange = (e) => {
+  const onFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((fd) => ({ ...fd, [name]: value }));
   };
-
-  // Gestione selezione file immagine
-  const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
+  const onFormFileChange = (e) => {
+    setImageFileOnForm(e.target.files[0]);
   };
-
-  // Gestione salvataggio (aggiunta o modifica) hotel
-  const handleSaveHotel = async (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
-    setModalMessage("");
-
+    setSaving(true);
+    setFormMessage("");
     try {
-      let hotelDataToSend = {
+      let result;
+      const payload = {
         nome: formData.nome,
         indirizzo: formData.indirizzo,
         citta: formData.citta,
         descrizione: formData.descrizione,
-        prezzoNotte: parseFloat(formData.prezzoNotte), // Assicurati che sia un numero
+        prezzoNotte: parseFloat(formData.prezzoNotte),
       };
-
-      let savedHotel;
       if (currentHotel) {
-        // Modifica hotel esistente
-        hotelDataToSend.id = currentHotel.id; // Assicurati di inviare l'ID per l'update
-        savedHotel = await updateHotel(currentHotel.id, hotelDataToSend);
+        result = await updateHotel(currentHotel.id, payload);
       } else {
-        // Crea nuovo hotel
-        savedHotel = await createHotel(hotelDataToSend);
+        result = await createHotel(payload);
       }
-
-      // Se c'è un file immagine, caricalo
-      if (imageFile) {
-        await uploadHotelImage(savedHotel.id, imageFile);
+      if (imageFileOnForm) {
+        await uploadHotelImage(result.id, imageFileOnForm);
       }
-
-      setModalMessage("Hotel salvato con successo!");
-      await fetchHotels(); // Ricarica la lista degli hotel
-      setTimeout(() => handleCloseModal(), 1500); // Chiudi il modale dopo un breve ritardo
+      setFormMessage("Salvataggio avvenuto!");
+      await fetchHotels();
+      setTimeout(closeFormModal, 1000);
     } catch (err) {
-      console.error("Errore nel salvare l'hotel:", err);
-      // MODIFICA QUI: Migliorata estrazione del messaggio di errore
-      const errorMessage =
-        err.response?.data?.message || err.message || err.toString();
-      setModalMessage(`Errore nel salvare l'hotel: ${errorMessage}`);
+      setFormMessage("Errore nel salvataggio");
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   };
 
-  // Gestione eliminazione hotel
-  const handleDeleteHotel = async (id) => {
-    if (!window.confirm("Sei sicuro di voler eliminare questo hotel?")) {
+  // Image modal handlers
+  const openImageModal = (hotel) => {
+    setHotelForImage(hotel);
+    setImageToUpload(null);
+    setUploadMessage("");
+    setShowImageModal(true);
+  };
+  const closeImageModal = () => {
+    setShowImageModal(false);
+    setHotelForImage(null);
+  };
+  const onImageChange = (e) => {
+    setImageToUpload(e.target.files[0]);
+  };
+  const submitImage = async (e) => {
+    e.preventDefault();
+    if (!imageToUpload) {
+      setUploadMessage("Seleziona file");
       return;
     }
-    setLoading(true); // Mostra lo spinner mentre elimina
+    setUploading(true);
+    setUploadMessage("");
     try {
-      await deleteHotel(id);
-      await fetchHotels(); // Ricarica la lista
+      await uploadHotelImage(hotelForImage.id, imageToUpload);
+      setUploadMessage("Upload riuscito!");
+      await fetchHotels();
+      setTimeout(closeImageModal, 1000);
     } catch (err) {
-      console.error("Errore nell'eliminare l'hotel:", err);
-      setError("Impossibile eliminare l'hotel. Riprova.");
+      setUploadMessage("Errore durante upload");
     } finally {
-      setLoading(false);
+      setUploading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Caricamento...</span>
-        </Spinner>
-        <p className="mt-2">Caricamento dati...</p>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="mt-5">
-        <Alert variant="danger" className="text-center">
-          {error}
-        </Alert>
-      </Container>
-    );
-  }
+  if (loading) return <Spinner />;
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center mb-4">Gestione Hotel (Admin)</h2>
-      <div className="d-flex justify-content-end mb-3">
-        <Button variant="success" onClick={() => handleShowModal()}>
-          Aggiungi Nuovo Hotel
-        </Button>
-      </div>
-
-      {hotels.length === 0 ? (
-        <Alert variant="info" className="text-center">
-          Nessun hotel presente. Aggiungine uno!
-        </Alert>
-      ) : (
-        <Table striped bordered hover responsive className="shadow-sm">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Indirizzo</th>
-              <th>Prezzo/Notte</th>
-              <th>Immagine</th>
-              <th>citta</th>
+      <Button
+        onClick={() => openFormModal()}
+        className="mb-3"
+        variant="success"
+      >
+        Aggiungi Hotel
+      </Button>
+      <Table bordered hover>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Indirizzo</th>
+            <th>Città</th>
+            <th>Prezzo</th>
+            <th>Immagine</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          {hotels.map((h) => (
+            <tr key={h.id}>
+              <td>{h.id}</td>
+              <td>{h.nome}</td>
+              <td>{h.indirizzo}</td>
+              <td>{h.citta}</td>
+              <td>€{h.prezzoNotte.toFixed(2)}</td>
+              <td>
+                {h.immagineUrl ? (
+                  <img
+                    src={h.immagineUrl}
+                    style={{ width: 50, height: 50, objectFit: "cover" }}
+                    alt=""
+                  />
+                ) : (
+                  "N/A"
+                )}
+              </td>
+              <td>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  onClick={() => openFormModal(h)}
+                >
+                  Modifica
+                </Button>{" "}
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => deleteHotel(h.id).then(fetchHotels)}
+                >
+                  Elimina
+                </Button>{" "}
+                <Button
+                  size="sm"
+                  variant="info"
+                  onClick={() => openImageModal(h)}
+                >
+                  Carica Immagine
+                </Button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {hotels.map((hotel) => (
-              <tr key={hotel.id}>
-                <td>{hotel.id}</td>
-                <td>{hotel.nome}</td>
-                <td>{hotel.indirizzo}</td>
-                <td>{hotel.citta}</td>
-                <td>€ {hotel.prezzoNotte?.toFixed(2)}</td>
-                <td>
-                  {hotel.immagineUrl ? (
-                    <img
-                      src={hotel.immagineUrl}
-                      alt={hotel.nome}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                        borderRadius: "5px",
-                      }}
-                    />
-                  ) : (
-                    <span>N/A</span>
-                  )}
-                </td>
-                <td>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleShowModal(hotel)}
-                  >
-                    Modifica
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeleteHotel(hotel.id)}
-                  >
-                    Elimina
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
+          ))}
+        </tbody>
+      </Table>
 
-      {/* Modale per Aggiungi/Modifica Hotel */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      {/* Form Modal */}
+      <Modal show={showFormModal} onHide={closeFormModal}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {currentHotel ? "Modifica Hotel" : "Aggiungi Nuovo Hotel"}
+            {currentHotel ? "Modifica Hotel" : "Nuovo Hotel"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {modalMessage && (
+          {formMessage && (
             <Alert
-              variant={modalMessage.includes("Errore") ? "danger" : "success"}
+              variant={formMessage.includes("Errore") ? "danger" : "success"}
             >
-              {modalMessage}
+              {formMessage}
             </Alert>
           )}
-          <Form onSubmit={handleSaveHotel}>
-            <Form.Group className="mb-3" controlId="formNome">
+          <Form onSubmit={submitForm}>
+            {/* campi */}
+            <Form.Group>
               <Form.Label>Nome</Form.Label>
               <Form.Control
-                type="text"
                 name="nome"
+                required
+                onChange={onFormChange}
                 value={formData.nome}
-                onChange={handleChange}
-                required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formCitta">
-              <Form.Label>citta</Form.Label>
-              <Form.Control
-                type="text"
-                name="citta"
-                value={formData.citta}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="formIndirizzo">
+            <Form.Group>
               <Form.Label>Indirizzo</Form.Label>
               <Form.Control
-                type="text"
                 name="indirizzo"
-                value={formData.indirizzo}
-                onChange={handleChange}
                 required
+                onChange={onFormChange}
+                value={formData.indirizzo}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formDescrizione">
+            <Form.Group>
+              <Form.Label>Città</Form.Label>
+              <Form.Control
+                name="citta"
+                required
+                onChange={onFormChange}
+                value={formData.citta}
+              />
+            </Form.Group>
+            <Form.Group>
               <Form.Label>Descrizione</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
                 name="descrizione"
-                value={formData.descrizione}
-                onChange={handleChange}
                 required
+                onChange={onFormChange}
+                value={formData.descrizione}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formPrezzoNotte">
-              <Form.Label>Prezzo per Notte</Form.Label>
+            <Form.Group>
+              <Form.Label>Prezzo/notte</Form.Label>
               <Form.Control
                 type="number"
-                name="prezzoNotte"
-                value={formData.prezzoPerNotte}
-                onChange={handleChange}
-                required
                 step="0.01"
+                name="prezzoNotte"
+                required
+                onChange={onFormChange}
+                value={formData.prezzoNotte}
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formImmagine">
-              <Form.Label>Carica Immagine (opzionale)</Form.Label>
+            <Form.Group>
+              <Form.Label>Immagine (opzionale)</Form.Label>
               <Form.Control
                 type="file"
-                onChange={handleFileChange}
                 accept="image/*"
+                onChange={onFormFileChange}
               />
-              {formData.immagineUrl && !imageFile && (
-                <div className="mt-2">
-                  <small>Immagine attuale:</small>
-                  <img
-                    src={formData.immagineUrl}
-                    alt="Anteprima"
-                    style={{
-                      width: "100px",
-                      height: "auto",
-                      display: "block",
-                      marginTop: "5px",
-                    }}
-                  />
-                </div>
-              )}
             </Form.Group>
             <Button
               variant="primary"
               type="submit"
-              className="w-100"
-              disabled={submitting}
+              disabled={saving}
+              className="w-100 mt-2"
             >
-              {submitting ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  />{" "}
-                  Salvataggio...
-                </>
-              ) : (
-                "Salva Hotel"
-              )}
+              {saving ? <Spinner size="sm" /> : "Salva Hotel"}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Image Modal */}
+      <Modal show={showImageModal} onHide={closeImageModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Carica Immagine per "{hotelForImage?.nome}"</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {uploadMessage && (
+            <Alert
+              variant={uploadMessage.includes("Errore") ? "danger" : "success"}
+            >
+              {uploadMessage}
+            </Alert>
+          )}
+          <Form onSubmit={submitImage}>
+            <Form.Group>
+              <Form.Label>Seleziona file</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                required
+                onChange={onImageChange}
+              />
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={uploading}
+              className="w-100 mt-2"
+            >
+              {uploading ? <Spinner size="sm" /> : "Carica Immagine"}
             </Button>
           </Form>
         </Modal.Body>

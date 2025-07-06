@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
-// Non abbiamo ancora un'API per i voli, quindi per ora simuliamo il caricamento
-// import { getAllVoli } from '../api.js';
+import CardVolo from "../Components/CardVolo";
 
 function VoloListPage() {
   const [voli, setVoli] = useState([]); // Stato per la lista dei voli
@@ -17,9 +16,26 @@ function VoloListPage() {
         // const data = await getAllVoli();
         // setVoli(data);
 
-        // Per ora, simuliamo un ritardo e nessun dato
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        setVoli([]); // Nessun volo trovato per ora
+        const dati = [
+          {
+            id: 1,
+            compagnia: "Compagnia A",
+            partenza: "Milano",
+            arrivo: "Roma",
+            dataPartenza: "2023-10-01T10:00:00Z",
+            dataArrivo: "2023-10-01T12:00:00Z",
+          },
+          {
+            id: 2,
+            compagnia: "Compagnia B",
+            partenza: "Roma",
+            arrivo: "Milano",
+            dataPartenza: "2023-10-02T14:00:00Z",
+            dataArrivo: "2023-10-02T16:00:00Z",
+          },
+        ];
+        setVoli(dati);
       } catch (err) {
         console.error("Errore nel recuperare i voli:", err);
         setError("Impossibile caricare i voli. Riprova più tardi.");
@@ -61,12 +77,11 @@ function VoloListPage() {
         </Alert>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
-          {/* Qui andrebbero i componenti CardVolo se li avessi */}
-          {/* {voli.map((volo) => (
+          {voli.map((volo) => (
             <Col key={volo.id}>
               <CardVolo volo={volo} />
             </Col>
-          ))} */}
+          ))}
         </Row>
       )}
     </Container>

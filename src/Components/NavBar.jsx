@@ -11,19 +11,15 @@ function NavBar() {
   const { isAuthenticated, userRole, handleLogout } = useAuth();
   const navigate = useNavigate();
 
-  console.log("NavBar Debug - isAuthenticated:", isAuthenticated);
-  console.log("NavBar Debug - userRole:", userRole);
-
   const onLogout = () => {
     handleLogout();
     navigate("/");
   };
 
   return (
-    <Navbar expand="lg" className="bg-primary shadow-sm" data-bs-theme="dark">
+    <Navbar expand="lg" className="bg-success shadow-sm " data-bs-theme="dark">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          {/* NUOVA ICONA AGGIUNTA QUI */}
           <i className="bi bi-airplane-fill me-2"></i>{" "}
           {/* Icona dell'aereo di Bootstrap Icons */}
           Travel Mate
