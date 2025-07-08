@@ -18,6 +18,7 @@ import AdminViaggioManagementPage from "./Pages/admin/AdminViaggioManagementPage
 import AdminHotelManagementPage from "./Pages/admin/AdminHotelManagementPage.jsx";
 import AdminUserManagementPage from "./Pages/admin/AdminUserManagementPage.jsx";
 import AdminVoloManagementPage from "./Pages/admin/AdminVoloManagementPage.jsx"; // Pagina per la gestione dei voli
+import AdminGestionePrenotazionePage from "./Pages/admin/AdminGestionePrenotazionePage.jsx"; // Pagina per la gestione prenotazioni
 // Nuove pagine da aggiungere per i dettagli/prenotazione di hotel (e ViaggioBookingPage)
 import HotelDetailPage from "./Pages/HotelDetailPage.jsx"; // Pagina per i dettagli di un singolo hotel
 import HotelBookingPage from "./Pages/HotelBookingPage.jsx"; // Pagina per la prenotazione di un hotel
@@ -63,6 +64,10 @@ function App() {
             {/* Rotta per le prenotazioni dell'utente loggato */}
             <Route path="/my-bookings" element={<MyBookingsPage />} />
 
+            {/* Rotta per le recensioni dei viaggi */}
+
+            <Route path="/recensioni/:tipo/:id" element={<RecensionePage />} />
+
             {/* Rotte del Backoffice (Accesso solitamente riservato agli Amministratori) */}
             <Route
               path="/admin/hotels"
@@ -76,6 +81,10 @@ function App() {
             <Route
               path="/admin/flights"
               element={<AdminVoloManagementPage />}
+            />
+            <Route
+              path="/admin/bookings"
+              element={<AdminGestionePrenotazionePage />}
             />
           </Routes>
         </main>

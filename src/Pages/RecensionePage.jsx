@@ -1,21 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Form, Button, Spinner, Alert } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext.jsx";
+import api from "../api"; // Assicurati di importare le funzioni API necessarie
 
-const RecensionePage = ({ currentUser }) => {
-  const { viaggioId } = useParams();
+const RecensionePage = () => {
+  const { currentUser } = useAuth(); // Ottieni l'utente corrente dal contesto di autenticazione
+  const { tipo, id } = useParams();
+  console.log("Tipo:", tipo, "ID:", id); // tipo: "viaggio" o "hotel"
   const [recensioni, setRecensioni] = useState([]);
   const [contenuto, setContenuto] = useState("");
   const [valutazione, setValutazione] = useState(5);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const fetchRecensioni = async () => {
     try {
-      const response = await fetch(`/api/recensioni/viaggio/${viaggioId}`);
-      if (!response.ok)
+      setLoading(true);
+      const response = await fetch(`/recensioni/${tipo}/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        },
+      });
+
+      if (!response.ok) {
         throw new Error("Errore nel caricamento delle recensioni");
+      }
       const data = await response.json();
       setRecensioni(data);
     } catch (err) {
@@ -27,43 +40,89 @@ const RecensionePage = ({ currentUser }) => {
 
   useEffect(() => {
     fetchRecensioni();
-  }, [viaggioId]);
+  }, [tipo, id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/recensioni", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}` se serve
-        },
-        body: JSON.stringify({
-          contenuto,
-          valutazione,
-          utenteId: currentUser.id,
-          viaggioId: viaggioId,
-        }),
-      });
+      const postEndpoint = `/recensioni/${tipo}`;
+      const reviewBody = {
+        contenuto,
+        valutazione,
+        [tipo]: { id: parseInt(id) }, // es. { hotel: { id: 1 } }
+      };
+      console.log("🔍 Endpoint:", postEndpoint);
+      console.log("📦 Body:", reviewBody);
+      console.log("🔐 Token:", localStorage.getItem("jwtToken"));
 
-      if (!response.ok)
-        throw new Error("Errore durante l'invio della recensione");
+      await api.post(postEndpoint, reviewBody);
 
       setContenuto("");
       setValutazione(5);
-      setSubmitted(true);
-      fetchRecensioni(); // aggiorna la lista
+      setSuccess(true);
+      await fetchRecensioni();
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.response?.data?.message || "Errore durante l'invio della recensione"
+      );
     }
+  };
+
+  const capitalizedTipo = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+  const renderStars = (valutazione) => {
+    return "★".repeat(valutazione) + "☆".repeat(8 - valutazione);
+  };
+  const getLegenda = (media) => {
+    if (media >= 7.5) return "Eccellente";
+    if (media >= 5) return "Buono";
+    if (media >= 3) return "Sufficiente";
+    if (media > 0) return "Scarsa";
+    return "Nessuna valutazione";
   };
 
   const haGiaRecensito =
     currentUser && recensioni.some((rec) => rec.utenteId === currentUser.id);
 
+  const mediaValutazioni =
+    recensioni.length > 0
+      ? recensioni.reduce((acc, r) => acc + r.valutazione, 0) /
+        recensioni.length
+      : null;
+
   return (
     <div className="container mt-4">
-      <h2>Recensioni del Viaggio</h2>
+      <h2>Recensioni del {capitalizedTipo}</h2>
+
+      {mediaValutazioni && (
+        <>
+          <div className="text-center mb-4">
+            <h5 className="mb-1">
+              Valutazione media: {mediaValutazioni.toFixed(1)} / 8 –{" "}
+              <strong>{getLegenda(mediaValutazioni)}</strong>
+            </h5>
+            <div style={{ fontSize: "1.5rem", color: "#ffc107" }}>
+              {"★".repeat(Math.round(mediaValutazioni))}
+              {"☆".repeat(8 - Math.round(mediaValutazioni))}
+            </div>
+          </div>
+
+          <div className="text-center mb-4">
+            <small className="text-muted d-block">
+              <strong>Legenda:</strong>
+            </small>
+            <small className="text-muted d-block">
+              ⭐⭐⭐⭐⭐⭐ 7.5–8 → Eccellente
+            </small>
+            <small className="text-muted d-block">⭐⭐⭐⭐ 5–7.4 → Buono</small>
+            <small className="text-muted d-block">
+              ⭐⭐⭐ 3–4.9 → Sufficiente
+            </small>
+            <small className="text-muted d-block">⭐⭐ 1–2.9 → Scarsa</small>
+          </div>
+        </>
+      )}
 
       {loading ? (
         <Spinner animation="border" />
@@ -79,8 +138,11 @@ const RecensionePage = ({ currentUser }) => {
                 <Card.Body>
                   <Card.Title>
                     {rec.utenteNome} {rec.utenteCognome}
-                    <span className="ms-3 text-warning">
-                      ★ {rec.valutazione}
+                    <span
+                      className="ms-3 text-warning"
+                      style={{ fontSize: "1.2rem" }}
+                    >
+                      {renderStars(rec.valutazione)}★ {rec.valutazione}
                     </span>
                   </Card.Title>
                   <Card.Text>{rec.contenuto}</Card.Text>
@@ -98,17 +160,27 @@ const RecensionePage = ({ currentUser }) => {
             </Alert>
           ) : haGiaRecensito ? (
             <Alert variant="success">
-              Hai già recensito questo viaggio. Grazie!
+              Hai già recensito questo {tipo}. Grazie!
             </Alert>
           ) : (
             <Form onSubmit={handleSubmit} className="mt-4">
               <h5>Scrivi una recensione</h5>
+
+              {success && (
+                <div
+                  className="alert alert-success fade show text-center mt-3"
+                  role="alert"
+                >
+                  🎉 Recensione inviata con successo!
+                </div>
+              )}
+
               <Form.Group>
-                <Form.Label>Valutazione (1-5)</Form.Label>
+                <Form.Label>Valutazione (1-8)</Form.Label>
                 <Form.Control
                   type="number"
                   min={1}
-                  max={5}
+                  max={8}
                   value={valutazione}
                   onChange={(e) => setValutazione(Number(e.target.value))}
                   required

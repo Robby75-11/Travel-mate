@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true); // Stato di caricamento iniziale
+  const [currentUser, setCurrentUser] = useState(null); // Stato per l'utente corrente
 
   // Funzione per gestire il logout (definita qui per essere usata in decodeTokenAndSetState)
   const handleLogout = useCallback(() => {
@@ -43,6 +44,13 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(true);
             // Assumi che il ruolo sia nel claim 'role' o 'roles'
             // E che il backend invii "ROLE_UTENTE" o "ROLE_AMMINISTRATORE"
+            setCurrentUser({
+              id: decoded.id,
+              nome: decoded.nome,
+              cognome: decoded.cognome,
+              email: decoded.sub || decoded.email,
+            });
+
             const roles = decoded.roles || decoded.role;
             if (Array.isArray(roles) && roles.length > 0) {
               setUserRole(roles[0].replace("ROLE_", "")); // Rimuovi il prefisso 'ROLE_'
@@ -94,6 +102,7 @@ export const AuthProvider = ({ children }) => {
   const authContextValue = {
     isAuthenticated,
     userRole,
+    currentUser, // Aggiunto currentUser per accedere ai dettagli dell'utente
     loading,
     handleLogin,
     handleLogout,

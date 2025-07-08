@@ -14,12 +14,7 @@ export default defineConfig({
       "/utenti": "http://localhost:8080",
       "/viaggi": "http://localhost:8080",
       "/voli": "http://localhost:8080",
-
-      // '/api': {
-      //   target: 'http://localhost:8080',
-      //   changeOrigin: true,
-
-      // },
+      "/recensioni": "http://localhost:8080",
     },
   },
 });

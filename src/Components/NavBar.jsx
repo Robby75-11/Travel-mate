@@ -55,6 +55,10 @@ function NavBar() {
                 <NavDropdown.Item as={Link} to="/admin/trips">
                   Gestione Viaggi
                 </NavDropdown.Item>
+
+                <NavDropdown.Item as={Link} to="/admin/bookings">
+                  Gestione Prenotazioni
+                </NavDropdown.Item>
               </NavDropdown>
             )}
             {isAuthenticated && (

@@ -145,6 +145,14 @@ function HotelDetailPage() {
                 >
                   Torna alla lista hotel
                 </Button>
+                <Button
+                  as={Link}
+                  to={`/recensioni/hotel/${hotel.id}`}
+                  variant="info"
+                  size="lg"
+                >
+                  Leggi / Scrivi Recensioni
+                </Button>
               </div>
             </Card.Body>
           </Card>

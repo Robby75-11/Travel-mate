@@ -144,6 +144,14 @@ function ViaggioDetailPage() {
                 >
                   Torna alla lista viaggi
                 </Button>
+                <Button
+                  as={Link}
+                  to={`/recensioni/viaggio/${viaggio.id}`}
+                  variant="info"
+                  size="lg"
+                >
+                  Leggi / Scrivi Recensioni
+                </Button>
               </div>
             </Card.Body>
           </Card>

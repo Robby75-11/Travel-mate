@@ -17,7 +17,7 @@ function ViaggioBookingPage() {
   const [bookingData, setBookingData] = useState({
     dataInizio: "",
     dataFine: "",
-    numPasseggeri: 1, // Valore predefinito
+    num: 1, // Valore predefinito
   });
   // Stati per la gestione del caricamento, messaggi e errori
   const [loading, setLoading] = useState(true);
@@ -111,8 +111,6 @@ function ViaggioBookingPage() {
         numPasseggeri: parseInt(bookingData.numPasseggeri, 10), // Assicurati che sia un numero
       };
 
-      console.log("Dati prenotazione inviati all'API:", bookingPayload);
-
       await createViaggioBooking(bookingPayload);
 
       setMessage(
@@ -123,7 +121,6 @@ function ViaggioBookingPage() {
         navigate("/my-bookings"); // Reindirizza alla pagina delle prenotazioni dell'utente
       }, 2000);
     } catch (error) {
-      console.error("Errore durante la prenotazione:", error);
       const errorMessage =
         error.response?.data?.message || "Errore nella prenotazione. Riprova.";
       setMessage(errorMessage);

@@ -1,6 +1,8 @@
 import axios from "axios";
+
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
@@ -241,15 +243,23 @@ export const deleteViaggio = async (id) => {
 
 // Crea una prenotazione per un viaggio (richiede utente loggato)
 export const createViaggioBooking = async (bookingData) => {
-  try {
-    // bookingData dovrebbe contenere { viaggioId, dataInizio, dataFine, numPasseggeri }
-    const response = await api.post("/prenotazioni/", bookingData);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};
+  const token = localStorage.getItem("jwtToken");
 
+  const response = await fetch("/prenotazioni", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // 👉 NECESSARIO per autorizzazione
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Errore nella prenotazione del viaggio");
+  }
+
+  return await response.json();
+};
 // Recupera le prenotazioni dell'utente loggato
 export const getUserBookings = async () => {
   try {
@@ -274,11 +284,12 @@ export const cancelBooking = async (bookingId) => {
 // Crea una prenotazione per un hotel (richiede utente loggato)
 export const createHotelBooking = async (bookingData) => {
   try {
-    // bookingData dovrebbe contenere { hotelId, dataInizio, dataFine, numOspiti }
-    const response = await api.post("/prenotazioni/", bookingData); // Assicurati che l'endpoint sia corretto nel tuo backend
+    const response = await api.post("/prenotazioni", bookingData); // usa Axios con interceptor!
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : error.message;
+    throw (
+      error.response?.data?.message || "Errore nella prenotazione dell'hotel"
+    );
   }
 };
 
@@ -305,30 +316,14 @@ export const getVoloById = async (id) => {
 };
 
 // Prenota un volo (richiede utente loggato)
-export const prenotaVolo = async (prenotazione) => {
-  const token = localStorage.getItem("token");
-
-  // Se il token non è presente, blocca la richiesta
-  if (!token) {
-    throw new Error("Utente non autenticato. Effettua il login.");
+export const prenotaVolo = async (bookingData) => {
+  try {
+    const response = await api.post("/prenotazioni", bookingData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Errore nella prenotazione del volo";
   }
-
-  const response = await fetch("/prenotazioni", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    },
-    body: JSON.stringify(prenotazione),
-  });
-
-  if (!response.ok) {
-    throw new Error("Errore nella prenotazione del volo");
-  }
-
-  return await response.json();
 };
-
 // Crea un nuovo volo (richiede ruolo AMMINISTRATORE)
 export const createVoloBooking = async (voloData) => {
   try {
@@ -365,6 +360,37 @@ export const uploadVoloImage = async (id, file) => {
   formData.append("file", file);
   try {
     const response = await api.patch(`/voli/${id}/immagine`, formData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
+export const getAllPrenotazioni = async () => {
+  try {
+    const response = await api.get("/prenotazioni");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updatePrenotazione = async (id, data) => {
+  const response = await api.put(`/prenotazioni/${id}`, data);
+  return response.data;
+};
+
+export const inviaEmailConferma = async (idPrenotazione) => {
+  const response = await api.post(
+    `/email/invia?idPrenotazione=${idPrenotazione}`
+  );
+  return response.data;
+};
+
+// Elimina una prenotazione tramite ID (richiede autenticazione)
+export const deletePrenotazione = async (id) => {
+  try {
+    const response = await api.delete(`/prenotazioni/${id}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;

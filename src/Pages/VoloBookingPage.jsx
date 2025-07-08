@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Button, Form } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import { getVoloById, prenotaVolo } from "../api.js";
+import { getVoloById, prenotaVolo } from "../api";
 
 function VoloBookingPage() {
   const { id } = useParams(); // ID volo da URL
@@ -39,9 +39,16 @@ function VoloBookingPage() {
     setError(null);
     setMessage("");
     try {
-      //  console.log("Prenotazione in corso per il volo ID:", id, "da utente ID:", user.id);
-      const response = await prenotaVolo(id, user.id); // chiamata reale
-      //  console.log("Risposta prenotazione:", response);
+      const payload = {
+        voloId: id,
+        utenteId: user.id,
+      };
+
+      await prenotaVolo({
+        voloId: id,
+        utenteId: user.id,
+      }); // ✅ chiamata corretta con oggetto
+
       setMessage("Prenotazione effettuata con successo!");
     } catch (err) {
       //  console.error("Errore durante la prenotazione:", err);
