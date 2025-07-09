@@ -17,7 +17,7 @@ function ViaggioBookingPage() {
   const [bookingData, setBookingData] = useState({
     dataInizio: "",
     dataFine: "",
-    num: 1, // Valore predefinito
+    numPasseggeri: 1, // Valore predefinito
   });
   // Stati per la gestione del caricamento, messaggi e errori
   const [loading, setLoading] = useState(true);
@@ -108,7 +108,10 @@ function ViaggioBookingPage() {
         viaggioId: id,
         dataInizio: bookingData.dataInizio,
         dataFine: bookingData.dataFine,
-        numPasseggeri: parseInt(bookingData.numPasseggeri, 10), // Assicurati che sia un numero
+        numPasseggeri: parseInt(bookingData.numPasseggeri, 10),
+        destinazione: viaggio?.destinazione || "Prenotazione viaggio",
+        statoPrenotazione: "IN_ATTESA",
+        prezzo: viaggio?.costoViaggio || 0, //
       };
 
       await createViaggioBooking(bookingPayload);
@@ -180,7 +183,11 @@ function ViaggioBookingPage() {
               </p>
               <p>{viaggio.descrizione}</p>
               <h5 className="text-primary">
-                CostoViaggio: € {viaggio.costoViaggio?.toFixed(2) || "N/A"}
+                Costo viaggio: €{" "}
+                {(Number.isFinite(viaggio.costoViaggio)
+                  ? viaggio.costoViaggio
+                  : 0
+                ).toFixed(2)}
               </h5>
             </div>
           )}

@@ -83,13 +83,19 @@ function AdminGestionePrenotazionePage() {
 
   const handleEmail = async (id) => {
     try {
-      await inviaEmailConferma(id, formData.messaggioEmail);
-      alert("Email inviata con successo!");
-    } catch {
-      alert("Errore nell'invio dell'email");
+      const emailRequest = {
+        idPrenotazione: id,
+        testo: formData.messaggioEmail,
+        oggetto: "Conferma Prenotazione", // opzionale se vuoi personalizzarlo
+      };
+
+      await inviaEmailConferma(emailRequest);
+      alert("✅ Email inviata con successo!");
+    } catch (error) {
+      console.error("Errore invio email:", error);
+      alert("❌ Errore nell'invio dell'email");
     }
   };
-
   if (loading) return <Spinner />;
   if (error) return <Alert variant="danger">{error}</Alert>;
 
@@ -112,15 +118,26 @@ function AdminGestionePrenotazionePage() {
           {prenotazioni.map((p) => (
             <tr key={p.id}>
               <td>{p.id}</td>
-              <td>
-                {p.utente?.nome} {p.utente?.cognome}
-              </td>
-              <td>{p.utente?.email}</td>
+              <td>{p.utente ? `${p.utente.nome} ${p.utente.cognome}` : "-"}</td>
+
+              <td>{p.utente ? p.utente.email : "-"}</td>
               <td>{p.destinazione || "-"}</td>
               <td>
                 {p.dataInizio} - {p.dataFine}
               </td>
-              <td>{p.statoPrenotazione}</td>
+              <td>
+                <span
+                  className={`badge ${
+                    p.statoPrenotazione === "CONFERMATA"
+                      ? "bg-success"
+                      : p.statoPrenotazione === "IN_ATTESA"
+                      ? "bg-warning text-dark"
+                      : "bg-danger"
+                  }`}
+                >
+                  {p.statoPrenotazione}
+                </span>
+              </td>
               <td>
                 <Button size="sm" onClick={() => handleUpdateModal(p)}>
                   Modifica
@@ -132,7 +149,7 @@ function AdminGestionePrenotazionePage() {
                 >
                   Elimina
                 </Button>{" "}
-                {p.statoPrenotazione === "CONFERMATO" && (
+                {p.statoPrenotazione === "CONFERMATA" && (
                   <Button
                     size="sm"
                     variant="success"
@@ -165,12 +182,12 @@ function AdminGestionePrenotazionePage() {
               >
                 <option value="">-- Seleziona --</option>
                 <option value="IN_ATTESA">In Attesa</option>
-                <option value="CONFERMATO">Confermato</option>
-                <option value="ANNULLATA">Annullato</option>
+                <option value="CONFERMATA">Confermata</option>
+                <option value="ANNULLATA">Annullata</option>
               </Form.Select>
             </Form.Group>
 
-            {formData.statoPrenotazione === "CONFERMATO" && (
+            {formData.statoPrenotazione === "CONFERMATA" && (
               <Form.Group className="mt-3">
                 <Form.Label>Messaggio Email</Form.Label>
                 <Form.Control
@@ -186,7 +203,7 @@ function AdminGestionePrenotazionePage() {
             <Button type="submit" className="mt-3" disabled={saving}>
               {saving ? "Salvataggio..." : "Salva"}
             </Button>
-            {formData.statoPrenotazione === "CONFERMATO" && (
+            {formData.statoPrenotazione === "CONFERMATA" && (
               <Button
                 type="button"
                 variant="success"

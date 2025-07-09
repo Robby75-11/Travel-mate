@@ -124,7 +124,11 @@ function ViaggioDetailPage() {
               <p>{viaggio.descrizione}</p>
               <hr />
               <h4 className="text-primary text-center mb-4">
-                Prezzo: € {viaggio.prezzo?.toFixed(2)}
+                Prezzo: €{" "}
+                {(Number.isFinite(viaggio.costoViaggio)
+                  ? viaggio.costoViaggio
+                  : 0
+                ).toFixed(2)}
               </h4>
 
               <div className="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">

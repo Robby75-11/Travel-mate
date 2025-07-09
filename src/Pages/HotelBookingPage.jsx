@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
+import { Container, Alert, Spinner } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx"; // per verificare se l'utente è autenticato
 import { getHotelById, createHotelBooking } from "../api.js"; // Importa la funzione API per ottenere gli hotel disponibili
 import { useParams, useNavigate } from "react-router-dom"; // useParams per l'ID dell'hotel dall'URL
@@ -62,6 +62,11 @@ function HotelBookingPage() {
     });
   };
 
+  const giorni =
+    (new Date(bookingData.dataFine) - new Date(bookingData.dataInizio)) /
+    (1000 * 60 * 60 * 24);
+  const prezzoTotale = giorni > 0 ? giorni * (hotel?.prezzoNotte || 0) : 0;
+
   // Funzione per gestire l'invio del form di prenotazione
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,17 +93,19 @@ function HotelBookingPage() {
       setSubmitting(false);
       return;
     }
-
     try {
       // Prepara i dati per l'API di prenotazione hotel
       const bookingPayload = {
         hotelId: id, // ID dell'hotel
         dataInizio: bookingData.dataInizio,
         dataFine: bookingData.dataFine,
-        numOspiti: parseInt(bookingData.numOspiti, 10), // Assicurati che sia un numero
+        statoPrenotazione: "IN_ATTESA",
+        destinazione: `Hotel ${hotel?.nome || "Sconosciuto"}`,
+        prezzo: prezzoTotale,
       };
 
       // Chiama la funzione di prenotazione hotel API (da aggiungere in api.js)
+
       await createHotelBooking(bookingPayload);
 
       setMessage(
@@ -165,9 +172,14 @@ function HotelBookingPage() {
               <p className="text-muted">{hotel.indirizzo}</p>
               <p>{hotel.descrizione}</p>
               <h5 className="text-primary">
-                Prezzo per notte: € {hotel.prezzoPerNotte?.toFixed(2) || "N/A"}
+                Prezzo per notte: € {hotel.prezzoNotte?.toFixed(2) || "0.00"}
               </h5>
             </div>
+          )}
+          {bookingData.dataInizio && bookingData.dataFine && (
+            <h5 className="text-success">
+              Prezzo Totale: € {prezzoTotale.toFixed(2)}
+            </h5>
           )}
 
           {/* Mostra messaggi di errore o successo */}

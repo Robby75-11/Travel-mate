@@ -366,6 +366,7 @@ export const uploadVoloImage = async (id, file) => {
   }
 };
 
+// --- 7. Metodi per Prenotazioni (Endpoint: /prenotazioni) ---
 export const getAllPrenotazioni = async () => {
   try {
     const response = await api.get("/prenotazioni");
@@ -380,10 +381,8 @@ export const updatePrenotazione = async (id, data) => {
   return response.data;
 };
 
-export const inviaEmailConferma = async (idPrenotazione) => {
-  const response = await api.post(
-    `/email/invia?idPrenotazione=${idPrenotazione}`
-  );
+export const inviaEmailConferma = async (emailData) => {
+  const response = await api.post("/email/invia", emailData);
   return response.data;
 };
 

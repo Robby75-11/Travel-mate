@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Button, Form } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import { getVoloById, prenotaVolo } from "../api";
+import { getVoloById, prenotaVolo } from "../api.js";
 
 function VoloBookingPage() {
   const { id } = useParams(); // ID volo da URL
@@ -38,20 +38,20 @@ function VoloBookingPage() {
     setSubmitting(true);
     setError(null);
     setMessage("");
-    try {
-      const payload = {
-        voloId: id,
-        utenteId: user.id,
-      };
 
+    try {
       await prenotaVolo({
         voloId: id,
-        utenteId: user.id,
-      }); // ✅ chiamata corretta con oggetto
+        dataPrenotazione: new Date().toISOString().split("T")[0], // formato yyyy-MM-dd
+        statoPrenotazione: "IN_ATTESA",
+        destinazione: "Prenotazione volo",
+        dataInizio: new Date().toISOString().split("T")[0],
+        dataFine: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+        prezzo: volo.costoVolo,
+      });
 
       setMessage("Prenotazione effettuata con successo!");
     } catch (err) {
-      //  console.error("Errore durante la prenotazione:", err);
       setError("Errore durante la prenotazione. Riprova.");
     } finally {
       setSubmitting(false);
@@ -93,9 +93,7 @@ function VoloBookingPage() {
       </p>
       <p>
         <strong>CostoVolo:</strong> €{" "}
-        {typeof volo.costoVolo === "number"
-          ? volo.costoVolo.toFixed(2)
-          : "N.D."}
+        {(Number.isFinite(volo.costoVolo) ? volo.costoVolo : 0).toFixed(2)}
       </p>
 
       {message && <Alert variant="success">{message}</Alert>}
