@@ -33,7 +33,7 @@ function AdminViaggioManagementPage() {
     dataRitorno: "",
     descrizione: "",
     costoViaggio: "",
-    immagineUrl: "", // Campo per l'URL dell'immagine esistente
+    immaginePrincipale: "", // Campo per l'URL dell'immagine esistente
   });
   const [imageFile, setImageFile] = useState(null); // Stato per il file immagine da caricare
   const [submitting, setSubmitting] = useState(false); // Stato per l'invio del form
@@ -85,7 +85,7 @@ function AdminViaggioManagementPage() {
         viaggio && viaggio.dataRitorno ? viaggio.dataRitorno.split("T")[0] : "",
       descrizione: viaggio ? viaggio.descrizione : "",
       costoViaggio: viaggio ? viaggio.costoViaggio : "",
-      immagineUrl: viaggio ? viaggio.immagineUrl : "", // Popola l'URL esistente
+      immaginePrincipale: viaggio ? viaggio.immaginePrincipale : "", // Popola l'URL esistente
     });
     setImageFile(null); // Resetta il file immagine
     setModalMessage("");
@@ -101,7 +101,7 @@ function AdminViaggioManagementPage() {
       dataRitorno: "",
       descrizione: "",
       costoViaggio: "",
-      immagineUrl: "",
+      immaginePrincipale: "",
     });
     setImageFile(null);
   };
@@ -244,9 +244,9 @@ function AdminViaggioManagementPage() {
                 </td>
                 <td>€ {viaggio.costoViaggio.toFixed(2)}</td>
                 <td>
-                  {viaggio.immagineUrl ? (
+                  {viaggio.immaginePrincipale ? (
                     <img
-                      src={viaggio.immagineUrl}
+                      src={viaggio.immaginePrincipale}
                       alt={viaggio.destinazione}
                       style={{
                         width: "50px",

@@ -168,10 +168,10 @@ function ViaggioBookingPage() {
           <h2 className="text-center mb-4">Prenota: {viaggio?.destinazione}</h2>
           {viaggio && (
             <div className="mb-4 text-center">
-              {viaggio.immagineUrl && (
+              {viaggio.immaginiUrl && viaggio.immaginiUrl.length > 0 && (
                 <img
-                  src={viaggio.immagineUrl}
-                  alt={`Immagine di ${viaggio.destinazione}`}
+                  src={viaggio.immaginiUrl[0]}
+                  alt={`Immagine principale di ${viaggio.destinazione}`}
                   className="img-fluid rounded mb-3"
                   style={{ maxHeight: "250px", objectFit: "cover" }}
                 />

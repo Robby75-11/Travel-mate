@@ -8,23 +8,22 @@ import {
   Button,
   Spinner,
   Alert,
-  Form,
+  Carousel,
 } from "react-bootstrap";
-import { getViaggioById, uploadViaggioImage } from "../api.js";
+import { getViaggioById } from "../api.js";
 
 function ViaggioDetailPage() {
   const { id } = useParams();
   const [viaggio, setViaggio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const fetchViaggioDetails = async () => {
       try {
         const data = await getViaggioById(id);
         setViaggio(data);
+        console.log("Immagini viaggio:", data.immaginiUrl);
       } catch (err) {
         console.error("Errore nel recuperare i dettagli del viaggio:", err);
         setError(
@@ -38,32 +37,10 @@ function ViaggioDetailPage() {
     fetchViaggioDetails();
   }, [id]);
 
-  const handleImageUpload = async () => {
-    if (!selectedFiles.length) return;
-
-    const file = selectedFiles[0];
-    setUploading(true);
-
-    try {
-      const updatedViaggio = await uploadViaggioImage(id, file);
-      setViaggio(updatedViaggio);
-      setSelectedFiles([]);
-    } catch (err) {
-      alert("Errore durante l'upload dell'immagine.");
-      console.error(err);
-    } finally {
-      setUploading(false);
-    }
-  };
-
   if (loading) {
     return (
       <Container className="text-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">
-            Caricamento dettagli viaggio...
-          </span>
-        </Spinner>
+        <Spinner animation="border" role="status" />
         <p className="mt-2">Caricamento dettagli viaggio...</p>
       </Container>
     );
@@ -100,19 +77,47 @@ function ViaggioDetailPage() {
         <Col md={8}>
           <Card className="shadow-lg p-4">
             <Card.Body>
-              <h2 className="text-center mb-4">{viaggio.nome}</h2>
+              <h2 className="text-center mb-4">
+                {viaggio.nome || viaggio.destinazione}
+              </h2>
 
-              {viaggio.immagineUrl && (
+              {/* Carosello immagini */}
+              {viaggio.immaginiUrl && viaggio.immaginiUrl.length > 0 ? (
+                <div className="text-center mb-4">
+                  <Carousel>
+                    {viaggio.immaginiUrl.map((url, index) => (
+                      <Carousel.Item key={index}>
+                        <img
+                          className="d-block w-100 rounded"
+                          src={url}
+                          alt={`Slide ${index + 1}`}
+                          style={{
+                            maxHeight: "400px",
+                            objectFit: "cover",
+                          }}
+                          onError={(e) =>
+                            (e.currentTarget.src =
+                              "https://via.placeholder.com/600x300?text=Immagine+non+disponibile")
+                          }
+                        />
+                      </Carousel.Item>
+                    ))}
+                  </Carousel>
+                </div>
+              ) : (
                 <div className="text-center mb-4">
                   <img
-                    src={viaggio.immagineUrl}
-                    alt={`Immagine di ${viaggio.nome}`}
+                    src={
+                      viaggio.immaginePrincipale ||
+                      "https://via.placeholder.com/600x300?text=Viaggio"
+                    }
+                    onError={(e) =>
+                      (e.currentTarget.src =
+                        "https://via.placeholder.com/600x300?text=Immagine+non+disponibile")
+                    }
                     className="img-fluid rounded"
-                    style={{
-                      maxHeight: "400px",
-                      objectFit: "cover",
-                      width: "100%",
-                    }}
+                    alt="Immagine del viaggio"
+                    style={{ maxHeight: "400px", objectFit: "cover" }}
                   />
                 </div>
               )}
@@ -124,11 +129,7 @@ function ViaggioDetailPage() {
               <p>{viaggio.descrizione}</p>
               <hr />
               <h4 className="text-primary text-center mb-4">
-                Prezzo: €{" "}
-                {(Number.isFinite(viaggio.costoViaggio)
-                  ? viaggio.costoViaggio
-                  : 0
-                ).toFixed(2)}
+                Prezzo: € {Number(viaggio.costoViaggio).toFixed(2)}
               </h4>
 
               <div className="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">

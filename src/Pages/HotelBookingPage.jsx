@@ -40,6 +40,7 @@ function HotelBookingPage() {
       try {
         const data = await getHotelById(id);
         setHotel(data);
+        console.log("HOTEL DETTAGLI:", data); // <-- QUI
       } catch (err) {
         console.error("Errore nel recuperare i dettagli dell'hotel:", err);
         setMessage(
@@ -160,9 +161,9 @@ function HotelBookingPage() {
           <h2 className="text-center mb-4">Prenota: {hotel?.nome}</h2>
           {hotel && (
             <div className="mb-4 text-center">
-              {hotel.immagineUrl && (
+              {hotel.immaginePrincipale && (
                 <img
-                  src={hotel.immagineUrl}
+                  src={hotel.immaginePrincipale}
                   alt={`Immagine di ${hotel.nome}`}
                   className="img-fluid rounded mb-3"
                   style={{ maxHeight: "250px", objectFit: "cover" }}

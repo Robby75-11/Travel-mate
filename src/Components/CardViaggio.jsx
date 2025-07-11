@@ -12,10 +12,13 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
     dataPartenza,
     dataRitorno,
     descrizione,
-    immagineUrl,
+    immaginiUrl = [],
     costoViaggio,
   } = viaggio;
 
+  const immaginePrincipale = viaggio.immaginePrincipale?.trim()
+    ? viaggio.immaginePrincipale
+    : "https://via.placeholder.com/400x200?text=Viaggio";
   const formattedDataPartenza = new Date(dataPartenza).toLocaleDateString(
     "it-IT"
   );
@@ -26,10 +29,10 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
   return (
     <Card className="h-100 shadow-sm">
       {/* Immagine del Viaggio (dall'URL di Cloudinary) */}
-      {immagineUrl && (
+      {immaginePrincipale && (
         <Card.Img
           variant="top"
-          src={immagineUrl} // L'URL caricato su Cloudinary
+          src={immaginePrincipale} // L'URL caricato su Cloudinary
           alt={`Immagine di ${destinazione}`}
           style={{ height: "200px", objectFit: "cover" }} // Stile per l'immagine
         />

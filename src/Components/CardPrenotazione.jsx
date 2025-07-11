@@ -26,6 +26,7 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
     viaggioDataPartenza,
     viaggioDataRitorno,
     viaggioDescrizione,
+    viaggioImmagineUrl,
     // Dettagli Volo
     voloId,
     voloCompagniaAerea,
@@ -64,43 +65,45 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
     title = hotelNome || destinazione;
     imageUrl = hotelImmagineUrl;
     details.push(
-      <p key="hotel-indirizzo">Indirizzo: {hotelIndirizzo || "N/A"}</p>
+      <div key="hotel-indirizzo">Indirizzo: {hotelIndirizzo || "N/A"}</div>
     );
     details.push(<p key="hotel-citta">Città: {hotelCitta || "N/A"}</p>);
     details.push(
-      <p key="hotel-descrizione">
+      <div key="hotel-descrizione">
         {hotelDescrizione ? hotelDescrizione.substring(0, 100) + "..." : "N/A"}
-      </p>
+      </div>
     );
     details.push(
-      <p key="hotel-prezzo">Prezzonotte: € {hotelPrezzoNotte?.toFixed(2)}</p>
+      <div key="hotel-prezzo">
+        Prezzonotte: € {hotelPrezzoNotte?.toFixed(2)}
+      </div>
     );
     linkToDetails = hotelId ? `/hotels/${hotelId}` : null;
   } else if (bookingType === "Viaggio") {
     title = viaggioDestinazione || destinazione;
-    imageUrl = prenotazione.viaggio?.immagineUrl; // Se l'immagine non è appiattita
+    imageUrl = imageUrl = viaggioImmagineUrl; // Se l'immagine non è appiattita
     details.push(
-      <p key="viaggio-partenza">
+      <div key="viaggio-partenza">
         Partenza:{" "}
         {viaggioDataPartenza
           ? new Date(viaggioDataPartenza).toLocaleDateString("it-IT")
           : "N/A"}
-      </p>
+      </div>
     );
     details.push(
-      <p key="viaggio-ritorno">
+      <div key="viaggio-ritorno">
         Ritorno:{" "}
         {viaggioDataRitorno
           ? new Date(viaggioDataRitorno).toLocaleDateString("it-IT")
           : "N/A"}
-      </p>
+      </div>
     );
     details.push(
-      <p key="viaggio-descrizione">
+      <div key="viaggio-descrizione">
         {viaggioDescrizione
           ? viaggioDescrizione.substring(0, 100) + "..."
           : "N/A"}
-      </p>
+      </div>
     );
     linkToDetails = viaggioId ? `/trips/${viaggioId}` : null; // Assumendo un endpoint /trips/:id
   } else if (bookingType === "Volo") {
@@ -108,27 +111,27 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
       voloAeroportoArrivo || destinazione
     }`;
     details.push(
-      <p key="volo-partenza">Da: {voloAeroportoPartenza || "N/A"}</p>
+      <div key="volo-partenza">Da: {voloAeroportoPartenza || "N/A"}</div>
     );
     details.push(<p key="volo-arrivo">A: {voloAeroportoArrivo || "N/A"}</p>);
     details.push(
-      <p key="volo-data-partenza">
+      <div key="volo-data-partenza">
         Partenza:{" "}
         {voloDataOraPartenza
           ? new Date(voloDataOraPartenza).toLocaleString("it-IT")
           : "N/A"}
-      </p>
+      </div>
     );
     details.push(
-      <p key="volo-data-arrivo">
+      <div key="volo-data-arrivo">
         Arrivo:{" "}
         {voloDataOraArrivo
           ? new Date(voloDataOraArrivo).toLocaleString("it-IT")
           : "N/A"}
-      </p>
+      </div>
     );
     details.push(
-      <p key="volo-prezzo">Prezzo: € {voloPrezzo?.toFixed(2) || "N/A"}</p>
+      <div key="volo-prezzo">Prezzo: € {voloPrezzo?.toFixed(2) || "N/A"}</div>
     );
     linkToDetails = voloId ? `/flights/${voloId}` : null; // Assumendo un endpoint /flights/:id
   }
@@ -148,11 +151,13 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
         <Card.Subtitle className="mb-2 text-muted">
           Tipo: {bookingType} | Stato: {statoPrenotazione}
         </Card.Subtitle>
-        <Card.Text className="flex-grow-1">
-          Prenotato il: {displayDataPrenotazione}
-          Periodo: dal {displayDateInizio} al {displayDateFine}
+        <div className="flex-grow-1 card-text">
+          <p>Prenotato il: {displayDataPrenotazione}</p>
+          <p>
+            Periodo: dal {displayDateInizio} al {displayDateFine}
+          </p>
           {details}
-        </Card.Text>
+        </div>
 
         <div className="mt-auto">
           <h5 className="text-primary mb-3">

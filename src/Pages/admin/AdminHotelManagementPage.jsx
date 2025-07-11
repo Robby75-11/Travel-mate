@@ -135,7 +135,7 @@ function AdminHotelManagementPage() {
     setHotelForImage(null);
   };
   const onImageChange = (e) => {
-    setImageToUpload(e.target.files[0]);
+    setImageToUpload(Array.from(e.target.files));
   };
   const submitImage = async (e) => {
     e.preventDefault();
@@ -146,7 +146,12 @@ function AdminHotelManagementPage() {
     setUploading(true);
     setUploadMessage("");
     try {
-      await uploadHotelImage(hotelForImage.id, imageToUpload);
+      // ✅ Loop su tutte le immagini da inviare
+      const formData = new FormData();
+      imageToUpload.forEach((file) => {
+        formData.append("files", file); // deve combaciare con @RequestParam("files")
+      });
+      await uploadHotelImage(hotelForImage.id, formData);
       setUploadMessage("Upload riuscito!");
       await fetchHotels();
       setTimeout(closeImageModal, 1000);
@@ -190,9 +195,9 @@ function AdminHotelManagementPage() {
               <td>{h.citta}</td>
               <td>€{h.prezzoNotte.toFixed(2)}</td>
               <td>
-                {h.immagineUrl ? (
+                {h.immaginePrincipale ? (
                   <img
-                    src={h.immagineUrl}
+                    src={h.immaginePrincipale}
                     style={{ width: 50, height: 50, objectFit: "cover" }}
                     alt=""
                   />
@@ -293,12 +298,12 @@ function AdminHotelManagementPage() {
                 value={formData.prezzoNotte}
               />
             </Form.Group>
-            <Form.Group>
-              <Form.Label>Immagine (opzionale)</Form.Label>
+            <Form.Group controlId="formFileMultiple" className="mb-3">
+              <Form.Label>Carica Immagini</Form.Label>
               <Form.Control
                 type="file"
-                accept="image/*"
-                onChange={onFormFileChange}
+                multiple
+                onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
               />
             </Form.Group>
             <Button
@@ -332,6 +337,7 @@ function AdminHotelManagementPage() {
               <Form.Control
                 type="file"
                 accept="image/*"
+                multiple
                 required
                 onChange={onImageChange}
               />

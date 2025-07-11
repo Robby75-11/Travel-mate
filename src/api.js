@@ -106,12 +106,10 @@ export const deleteHotel = async (id) => {
 };
 
 // Carica l'immagine di un hotel (richiede ruolo AMMINISTRATORE)
-export const uploadHotelImage = async (id, file) => {
-  const formData = new FormData();
-  formData.append("file", file); // 'file' deve corrispondere al nome del parametro nel backend
+export const uploadHotelImage = async (id, formData) => {
   try {
-    // Axios gestisce automaticamente il Content-Type 'multipart/form-data' per FormData
-    const response = await api.patch(`/hotel/${id}/immagine`, formData);
+    const token = localStorage.getItem("jwtToken"); // 🔽 recupera token
+    const response = await api.patch(`/hotel/${id}/immagine`, formData, {});
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -381,8 +379,8 @@ export const updatePrenotazione = async (id, data) => {
   return response.data;
 };
 
-export const inviaEmailConferma = async (emailData) => {
-  const response = await api.post("/email/invia", emailData);
+export const inviaEmailConferma = async (emailRequestDto) => {
+  const response = await api.post("/email/invia", emailRequestDto);
   return response.data;
 };
 

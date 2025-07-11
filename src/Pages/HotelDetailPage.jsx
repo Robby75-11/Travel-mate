@@ -8,6 +8,7 @@ import {
   Button,
   Spinner,
   Alert,
+  Carousel,
   Form,
 } from "react-bootstrap";
 import { getHotelById, uploadHotelImage } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
@@ -23,11 +24,14 @@ function HotelDetailPage() {
   const handleImageUpload = async () => {
     if (!selectedFiles.length) return;
 
-    const file = selectedFiles[0]; // Prendiamo il primo file selezionato
     setUploading(true);
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append("files", file); // corrisponde a @RequestParam("files") nel backend
+    });
 
     try {
-      const updatedHotel = await uploadHotelImage(id, file);
+      const updatedHotel = await uploadHotelImage(id, formData);
       setHotel(updatedHotel); // Aggiorna l’hotel con la nuova immagine
       setSelectedFiles([]); // Reset del file selezionato
     } catch (err) {
@@ -43,6 +47,7 @@ function HotelDetailPage() {
       try {
         const data = await getHotelById(id); // Chiama l'API per ottenere i dettagli dell'hotel
         setHotel(data);
+        console.log("HOTEL DETTAGLI:", data);
       } catch (err) {
         console.error("Errore nel recuperare i dettagli dell'hotel:", err);
         setError(
@@ -104,20 +109,26 @@ function HotelDetailPage() {
             <Card.Body>
               <h2 className="text-center mb-4">{hotel.nome}</h2>
 
-              {/* Immagine dell'Hotel */}
-              {hotel.immagineUrl && (
-                <div className="text-center mb-4">
-                  <img
-                    src={hotel.immagineUrl}
-                    alt={`Immagine di ${hotel.nome}`}
-                    className="img-fluid rounded"
-                    style={{
-                      maxHeight: "400px",
-                      objectFit: "cover",
-                      width: "100%",
-                    }}
-                  />
-                </div>
+              {hotel.immaginiUrl && hotel.immaginiUrl.length > 0 ? (
+                <Carousel className="mb-4">
+                  {hotel.immaginiUrl.map((url, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        className="d-block w-100 rounded"
+                        src={url}
+                        alt={`Slide ${index + 1}`}
+                        style={{ maxHeight: "400px", objectFit: "cover" }}
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              ) : (
+                <img
+                  src="https://placehold.co/800x400?text=Nessuna+Immagine"
+                  alt="Placeholder"
+                  className="img-fluid rounded mb-4"
+                  style={{ maxHeight: "400px", objectFit: "cover" }}
+                />
               )}
 
               <p className="lead text-muted text-center">{hotel.indirizzo}</p>
