@@ -102,6 +102,16 @@ function ViaggioBookingPage() {
       return;
     }
 
+    const dataInizio = new Date(bookingData.dataInizio);
+    const dataFine = new Date(bookingData.dataFine);
+    const giorni = Math.ceil((dataFine - dataInizio) / (1000 * 60 * 60 * 24));
+    const settimane = giorni > 0 ? Math.ceil(giorni / 7) : 1;
+
+    const prezzoTotaleViaggio =
+      (viaggio?.costoViaggio || 0) *
+      parseInt(bookingData.numPasseggeri, 10) *
+      settimane;
+
     try {
       // Prepara i dati per l'API di prenotazione
       const bookingPayload = {
@@ -111,7 +121,7 @@ function ViaggioBookingPage() {
         numPasseggeri: parseInt(bookingData.numPasseggeri, 10),
         destinazione: viaggio?.destinazione || "Prenotazione viaggio",
         statoPrenotazione: "IN_ATTESA",
-        prezzo: viaggio?.costoViaggio || 0, //
+        prezzo: prezzoTotaleViaggio, //Totale calcolato con settimane e passeggeri
       };
 
       await createViaggioBooking(bookingPayload);

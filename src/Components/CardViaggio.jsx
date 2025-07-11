@@ -1,62 +1,87 @@
-// src/components/CardViaggio.js
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-// La prop 'viaggio' conterrà tutti i dettagli del viaggio, inclusa immagineUrl
-// La prop 'isBooked' (opzionale) servirà per mostrare lo stato in contesti come MyBookingsPage
 function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
+  if (!viaggio || typeof viaggio !== "object") return null;
+
   const {
     id,
-    destinazione,
+    destinazione = "Destinazione non disponibile",
     dataPartenza,
     dataRitorno,
-    descrizione,
-    immaginiUrl = [],
+    descrizione = "Nessuna descrizione disponibile",
     costoViaggio,
+    immaginePrincipale,
   } = viaggio;
 
-  const immaginePrincipale = viaggio.immaginePrincipale?.trim()
-    ? viaggio.immaginePrincipale
-    : "https://via.placeholder.com/400x200?text=Viaggio";
-  const formattedDataPartenza = new Date(dataPartenza).toLocaleDateString(
-    "it-IT"
-  );
-  const formattedDataRitorno = new Date(dataRitorno).toLocaleDateString(
-    "it-IT"
-  );
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date.getTime())
+      ? "Data non disponibile"
+      : date.toLocaleDateString("it-IT");
+  };
+
+  const immagine = immaginePrincipale?.trim()
+    ? immaginePrincipale
+    : "https://via.placeholder.com/600x300?text=Viaggio";
+
+  const prezzo = !isNaN(parseFloat(costoViaggio))
+    ? parseFloat(costoViaggio).toFixed(2)
+    : "N.D.";
 
   return (
-    <Card className="h-100 shadow-sm">
-      {/* Immagine del Viaggio (dall'URL di Cloudinary) */}
-      {immaginePrincipale && (
-        <Card.Img
-          variant="top"
-          src={immaginePrincipale} // L'URL caricato su Cloudinary
-          alt={`Immagine di ${destinazione}`}
-          style={{ height: "200px", objectFit: "cover" }} // Stile per l'immagine
-        />
-      )}
+    <Card
+      className="h-100 shadow-sm border-0"
+      style={{
+        borderRadius: "16px",
+        transition: "transform 0.2s ease-in-out",
+      }}
+    >
+      <Card.Img
+        variant="top"
+        src={immagine}
+        alt={`Immagine di ${destinazione}`}
+        style={{
+          height: "200px",
+          objectFit: "cover",
+          borderTopLeftRadius: "16px",
+          borderTopRightRadius: "16px",
+        }}
+      />
+
       <Card.Body className="d-flex flex-column">
-        <Card.Title>{destinazione}</Card.Title>
+        <Card.Title className="fw-semibold fs-5 text-capitalize">
+          {destinazione}
+        </Card.Title>
+
         <Card.Subtitle className="mb-2 text-muted">
-          Dal {formattedDataPartenza} al {formattedDataRitorno}
+          Dal {formatDate(dataPartenza)} al {formatDate(dataRitorno)}
         </Card.Subtitle>
-        <Card.Text className="flex-grow-1">
-          {descrizione.substring(0, 150)}... {/* Tronca la descrizione */}
+
+        <Card.Text
+          className="flex-grow-1"
+          style={{
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            display: "-webkit-box",
+            overflow: "hidden",
+          }}
+        >
+          {descrizione}
         </Card.Text>
 
-        <div className="mt-auto">
-          <h5 className="text-primary mb-3">
-            CostoViaggio: € {costoViaggio.toFixed(2)}
-          </h5>
-          {/* Sezione Bottoni e Stato */}
-          <div className="d-flex justify-content-between align-items-center">
+        <div className="mt-3">
+          <Badge bg="info" className="mb-2 fs-6 px-3 py-2">
+            Costo Viaggio: € {prezzo}
+          </Badge>
+
+          <div className="d-flex justify-content-between flex-wrap mt-2 gap-2">
             {isBooked ? (
-              // Mostra se il viaggio è già stato prenotato (es. in MyBookingsPage)
               <>
-                <span className="badge bg-success">Prenotato</span>
-                {/* Bottone Annulla, visibile solo se è prenotato e viene fornita la funzione onCancelBooking */}
+                <Badge bg="success" className="align-self-center">
+                  Prenotato
+                </Badge>
                 {onCancelBooking && (
                   <Button
                     variant="outline-danger"
@@ -68,19 +93,23 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
                 )}
               </>
             ) : (
-              // Mostra se il viaggio è disponibile per la prenotazione (es. in ViaggioListPage)
               <>
-                {/* Bottone "Vedi Dettagli" */}
                 <Button
                   as={Link}
                   to={`/trips/${id}`}
                   variant="outline-warning"
-                  className="ms-2"
+                  size="sm"
+                  className="flex-fill"
                 >
                   Vedi Dettagli
                 </Button>
-                {/* Bottone "Prenota Ora" che porta alla pagina di prenotazione specifica */}
-                <Button as={Link} to={`/book-trip/${id}`} variant="primary">
+                <Button
+                  as={Link}
+                  to={`/book-trip/${id}`}
+                  variant="primary"
+                  size="sm"
+                  className="flex-fill"
+                >
                   Prenota Ora
                 </Button>
               </>

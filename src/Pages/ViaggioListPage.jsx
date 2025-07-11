@@ -56,16 +56,22 @@ function ViaggioListPage() {
         </Alert>
       ) : (
         <Row xs={1} md={2} lg={3} className="g-4">
-          {" "}
           {/* Griglia responsiva per le card */}
-          {viaggi.map((viaggio) => (
-            <Col key={viaggio.id}>
-              {" "}
-              {/* Ogni card in una colonna per il layout a griglia */}
-              <CardViaggio viaggio={viaggio} />{" "}
-              {/* Renderizza il componente CardViaggio per ogni viaggio */}
-            </Col>
-          ))}
+          {viaggi
+            .filter(
+              (v) =>
+                v &&
+                v.id &&
+                v.destinazione &&
+                v.dataPartenza &&
+                v.dataRitorno &&
+                v.costoViaggio !== undefined
+            )
+            .map((v) => (
+              <Col key={v.id}>
+                <CardViaggio viaggio={v} />
+              </Col>
+            ))}
         </Row>
       )}
     </Container>

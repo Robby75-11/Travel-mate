@@ -293,6 +293,15 @@ export const createHotelBooking = async (bookingData) => {
 
 // --- 6. Metodi per Voli (Endpoint: /voli) ---
 
+export const createVolo = async (formData) => {
+  try {
+    const response = await api.post("/voli", formData);
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : error.message;
+  }
+};
+
 // Recupera tutti i voli
 export const getAllVoli = async () => {
   try {
@@ -343,9 +352,9 @@ export const updateVolo = async (id, voloData) => {
 };
 
 // Elimina un volo tramite ID (richiede ruolo AMMINISTRATORE)
-export const deleteVolo = async (id) => {
+export const deleteVolo = async (voloId) => {
   try {
-    const response = await api.delete(`/voli/${id}`);
+    const response = await api.delete(`/voli/${voloId}`);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;

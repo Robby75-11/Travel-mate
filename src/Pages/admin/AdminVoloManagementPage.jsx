@@ -8,8 +8,8 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-// Importa le API per i voli quando saranno disponibili nel backend
-// import { getAllVoli, createVolo, updateVolo, deleteVolo, uploadVoloImage } from '../../api.js';
+
+import { getAllVoli, createVolo, updateVolo, deleteVolo } from "../../api.js";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -40,13 +40,8 @@ function AdminVoloManagementPage() {
     setLoading(true);
     setError(null);
     try {
-      // Qui andrebbe la chiamata API reale:
-      // const data = await getAllVoli();
-      // setVoli(data);
-
-      // Simulazione: nessun volo trovato per ora
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setVoli([]);
+      const data = await getAllVoli();
+      setVoli(data);
     } catch (err) {
       console.error("Errore nel recuperare i voli:", err);
       setError("Impossibile caricare i voli. Accesso negato o errore di rete.");
@@ -111,12 +106,14 @@ function AdminVoloManagementPage() {
 
     try {
       // Qui andrebbe la logica di createVolo o updateVolo
-      // let savedVolo;
-      // if (currentVolo) {
-      //     savedVolo = await updateVolo(currentVolo.id, formData);
-      // } else {
-      //     savedVolo = await createVolo(formData);
-      // }
+      let savedVolo;
+      if (currentVolo) {
+        savedVolo = await updateVolo(currentVolo.id, formData);
+      } else {
+        savedVolo = await createVolo(formData);
+      }
+      await fetchVoli(); // aggiorna la lista
+      setModalMessage("Volo salvato con successo!");
 
       setModalMessage("Funzionalità di gestione voli in sviluppo!");
       // await fetchVoli();
@@ -136,10 +133,8 @@ function AdminVoloManagementPage() {
     }
     setLoading(true);
     try {
-      // Qui andrebbe la logica di deleteVolo
-      // await deleteVolo(id);
-      setModalMessage("Funzionalità di gestione voli in sviluppo!");
-      // await fetchVoli();
+      await deleteVolo(id);
+      await fetchVoli();
     } catch (err) {
       console.error("Errore nell'eliminare il volo:", err);
       setError("Impossibile eliminare il volo. Riprova.");

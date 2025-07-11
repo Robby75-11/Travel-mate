@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import CardVolo from "../Components/CardVolo";
+import { getAllVoli } from "../api.js";
 
 function VoloListPage() {
   const [voli, setVoli] = useState([]); // Stato per la lista dei voli
@@ -12,30 +13,8 @@ function VoloListPage() {
       setLoading(true);
       setError(null);
       try {
-        // SIMULAZIONE: In un'applicazione reale, qui faresti una chiamata API:
-        // const data = await getAllVoli();
-        // setVoli(data);
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const dati = [
-          {
-            id: 1,
-            compagnia: "Compagnia A",
-            partenza: "Milano",
-            arrivo: "Roma",
-            dataPartenza: "2023-10-01T10:00:00Z",
-            dataArrivo: "2023-10-01T12:00:00Z",
-          },
-          {
-            id: 2,
-            compagnia: "Compagnia B",
-            partenza: "Roma",
-            arrivo: "Milano",
-            dataPartenza: "2023-10-02T14:00:00Z",
-            dataArrivo: "2023-10-02T16:00:00Z",
-          },
-        ];
-        setVoli(dati);
+        const data = await getAllVoli(); // ✅ chiama davvero l'API
+        setVoli(data); // ✅ aggiorna lo stato con i voli reali
       } catch (err) {
         console.error("Errore nel recuperare i voli:", err);
         setError("Impossibile caricare i voli. Riprova più tardi.");

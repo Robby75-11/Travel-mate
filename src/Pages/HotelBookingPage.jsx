@@ -66,7 +66,10 @@ function HotelBookingPage() {
   const giorni =
     (new Date(bookingData.dataFine) - new Date(bookingData.dataInizio)) /
     (1000 * 60 * 60 * 24);
-  const prezzoTotale = giorni > 0 ? giorni * (hotel?.prezzoNotte || 0) : 0;
+  const prezzoTotale =
+    giorni > 0
+      ? giorni * (hotel?.prezzoNotte || 0) * (bookingData.numOspiti || 1)
+      : 0;
 
   // Funzione per gestire l'invio del form di prenotazione
   const handleSubmit = async (e) => {
