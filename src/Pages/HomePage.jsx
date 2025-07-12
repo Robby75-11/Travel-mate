@@ -1,13 +1,69 @@
-import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx"; // Importa useAuth per controllare lo stato di autenticazione
+import { getAllHotels, getAllViaggi, getAllVoli } from "../api";
+import CardHotel from "../Components/CardHotel";
+import CardViaggio from "../Components/CardViaggio";
+import CardVolo from "../Components/CardVolo";
+import SearchBar from "../Components/SearchBar";
+import React, { useState, useEffect } from "react";
 
 function HomePage() {
   const { isAuthenticated } = useAuth(); // Ottieni lo stato di autenticazione
+  const [hotels, setHotels] = useState([]);
+  const [viaggi, setViaggi] = useState([]);
+  const [voli, setVoli] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchBy, setSearchBy] = useState("nome");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [hotelData, viaggioData, voloData] = await Promise.all([
+          getAllHotels(),
+          getAllViaggi(),
+          getAllVoli(),
+        ]);
+        setHotels(hotelData);
+        setViaggi(viaggioData);
+        setVoli(voloData);
+      } catch (error) {
+        console.error("Errore nel caricamento:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Filtra hotel e viaggi in base al searchTerm
+  // Funzione helper per normalizzare il confronto (case insensitive)
+  const match = (value) =>
+    value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+
+  // Filtri dinamici per hotel
+  const filteredHotels = hotels.filter((h) => {
+    if (searchBy === "nome") return match(h.nome);
+    if (searchBy === "indirizzo") return match(h.indirizzo);
+    if (searchBy === "prezzo") return match(h.prezzoNotte);
+    return true;
+  });
+
+  // Filtri dinamici per viaggi
+  const filteredViaggi = viaggi.filter((v) => {
+    if (searchBy === "nome") return match(v.destinazione);
+    if (searchBy === "indirizzo") return match(v.descrizione);
+    if (searchBy === "prezzo") return match(v.costoViaggio);
+    return true;
+  });
+
+  // Filtri dinamici per voli
+  const filteredVoli = voli.filter((v) => {
+    if (searchBy === "nome") return match(v.compagnia);
+    if (searchBy === "indirizzo") return match(v.destinazione);
+    if (searchBy === "prezzo") return match(v.costoVolo);
+    return true;
+  });
   return (
-    <Container className="mt-5">
+    <Container className="mt-4">
       {/* Sezione Hero / Introduttiva */}
       <Row className="justify-content-center text-center mb-5">
         <Col md={10} lg={8}>
@@ -39,6 +95,46 @@ function HomePage() {
             </Button>
           </div>
         </Col>
+      </Row>
+
+      {/* 🔎 Barra di ricerca */}
+      <Row className="justify-content-center mb-3">
+        <Col md={10}>
+          <SearchBar
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            searchBy={searchBy}
+            onSearchByChange={setSearchBy}
+          />
+        </Col>
+      </Row>
+
+      {/* 🏨 Lista Hotel */}
+      <h3 className="mt-4 mb-3">Hotel Disponibili</h3>
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {filteredHotels.map((hotel) => (
+          <Col key={hotel.id}>
+            <CardHotel hotel={hotel} />
+          </Col>
+        ))}
+      </Row>
+
+      {/* ✈️ Lista Viaggi */}
+      <h3 className="mt-5 mb-3">Viaggi Disponibili</h3>
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {filteredViaggi.map((viaggio) => (
+          <Col key={viaggio.id}>
+            <CardViaggio viaggio={viaggio} />
+          </Col>
+        ))}
+      </Row>
+      <h3 className="mb-4">Voli Popolari</h3>
+      <Row className="mb-5">
+        {filteredVoli.slice(0, 3).map((volo) => (
+          <Col key={volo.id} md={4} className="mb-4">
+            <CardVolo volo={volo} />
+          </Col>
+        ))}
       </Row>
 
       {/* Sezione "Perché Sceglierci" */}

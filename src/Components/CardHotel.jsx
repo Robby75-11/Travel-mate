@@ -20,17 +20,19 @@ function CardHotel({ hotel }) {
 
   return (
     <Card className="h-100 shadow-sm border-0" style={{ borderRadius: "16px" }}>
-      <Card.Img
-        variant="top"
-        src={immagine}
-        alt={`Immagine di ${nome}`}
-        style={{
-          height: "200px",
-          objectFit: "cover",
-          borderTopLeftRadius: "16px",
-          borderTopRightRadius: "16px",
-        }}
-      />
+      <Link to={`/hotels/${id}`}>
+        <Card.Img
+          variant="top"
+          src={immagine}
+          alt={`Immagine di ${nome}`}
+          style={{
+            height: "200px",
+            objectFit: "cover",
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+          }}
+        />
+      </Link>
       <Card.Body className="d-flex flex-column">
         <Card.Title className="fw-semibold fs-5">{nome}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">{indirizzo}</Card.Subtitle>

@@ -22,7 +22,8 @@ function AdminHotelManagementPage() {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [currentHotel, setCurrentHotel] = useState(null);
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ function AdminHotelManagementPage() {
     descrizione: "",
     prezzoNotte: "",
   });
-  const [imageFileOnForm, setImageFileOnForm] = useState(null);
+  const [imageFileOnForm, setImageFileOnForm] = useState([]);
   const [saving, setSaving] = useState(false);
   const [formMessage, setFormMessage] = useState("");
 
@@ -81,6 +82,22 @@ function AdminHotelManagementPage() {
     setFormMessage("");
     setShowFormModal(true);
   };
+
+  useEffect(() => {
+    if (selectedFiles.length === 0) {
+      setImagePreviews([]);
+      return;
+    }
+
+    const previews = selectedFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews(previews);
+
+    // Cleanup per liberare memoria
+    return () => {
+      previews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [selectedFiles]);
+
   const closeFormModal = () => {
     setShowFormModal(false);
     setCurrentHotel(null);
@@ -90,7 +107,7 @@ function AdminHotelManagementPage() {
     setFormData((fd) => ({ ...fd, [name]: value }));
   };
   const onFormFileChange = (e) => {
-    setImageFileOnForm(e.target.files[0]);
+    setImageFileOnForm(Array.from(e.target.files[0]));
   };
   const submitForm = async (e) => {
     e.preventDefault();
@@ -110,9 +127,14 @@ function AdminHotelManagementPage() {
       } else {
         result = await createHotel(payload);
       }
-      if (imageFileOnForm) {
-        await uploadHotelImage(result.id, imageFileOnForm);
+      if (selectedFiles.length > 0) {
+        const formDataUpload = new FormData();
+        selectedFiles.forEach((file) => {
+          formDataUpload.append("files", file); // deve corrispondere con @RequestParam("files") nel backend
+        });
+        await uploadHotelImage(result.id, formDataUpload);
       }
+
       setFormMessage("Salvataggio avvenuto!");
       await fetchHotels();
       setTimeout(closeFormModal, 1000);
@@ -306,6 +328,27 @@ function AdminHotelManagementPage() {
                 onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
               />
             </Form.Group>
+
+            {imagePreviews.length > 0 && (
+              <div className="mt-3">
+                <h6>Anteprima Immagini</h6>
+                <div className="d-flex flex-wrap gap-2">
+                  {imagePreviews.map((src, idx) => (
+                    <img
+                      key={idx}
+                      src={src}
+                      alt={`Anteprima ${idx + 1}`}
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
             <Button
               variant="primary"
               type="submit"

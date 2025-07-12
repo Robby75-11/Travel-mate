@@ -1,5 +1,5 @@
 // src/Pages/admin/AdminViaggioManagementPage.jsx
-import react, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Table,
@@ -9,13 +9,12 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-// Assicurati di avere uploadViaggioImage in api.js
 import {
   getAllViaggi,
   createViaggio,
   updateViaggio,
   deleteViaggio,
-  uploadViaggioImage,
+  uploadMultipleViaggioImages,
 } from "../../api.js";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
@@ -24,36 +23,31 @@ function AdminViaggioManagementPage() {
   const [viaggi, setViaggi] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false); // Stato per mostrare/nascondere il modale
-  const [currentViaggio, setCurrentViaggio] = useState(null); // Viaggio attualmente in modifica (null per nuovo)
+  const [showModal, setShowModal] = useState(false);
+  const [currentViaggio, setCurrentViaggio] = useState(null);
   const [formData, setFormData] = useState({
-    // Stato per i dati del form del modale
     destinazione: "",
     dataPartenza: "",
     dataRitorno: "",
     descrizione: "",
     costoViaggio: "",
-    immaginePrincipale: "", // Campo per l'URL dell'immagine esistente
+    immaginePrincipale: "",
   });
-  const [imageFile, setImageFile] = useState(null); // Stato per il file immagine da caricare
-  const [submitting, setSubmitting] = useState(false); // Stato per l'invio del form
-  const [modalMessage, setModalMessage] = useState(""); // Messaggi nel modale
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const { userRole, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Funzione per recuperare tutti i viaggi
   const fetchViaggi = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllViaggi(); // Ora restituisce List<ViaggioResponseDto>
+      const data = await getAllViaggi();
       setViaggi(data);
     } catch (err) {
-      console.error("Errore nel recuperare i viaggi:", err);
-      setError(
-        "Impossibile caricare i viaggi. Accesso negato o errore di rete."
-      );
+      setError("Errore nel caricamento dei viaggi.");
     } finally {
       setLoading(false);
     }
@@ -61,39 +55,32 @@ function AdminViaggioManagementPage() {
 
   useEffect(() => {
     if (!isAuthenticated || userRole !== "AMMINISTRATORE") {
-      setError(
-        "Accesso negato. Solo gli amministratori possono accedere a questa pagina."
-      );
+      setError("Accesso negato.");
       setLoading(false);
-      setTimeout(() => navigate("/login"), 2000); // Reindirizza al login
+      setTimeout(() => navigate("/login"), 2000);
       return;
     }
     fetchViaggi();
   }, [isAuthenticated, userRole, navigate, fetchViaggi]);
 
-  // Gestione apertura/chiusura modale
   const handleShowModal = (viaggio = null) => {
     setCurrentViaggio(viaggio);
     setFormData({
-      destinazione: viaggio ? viaggio.destinazione : "",
-      // Formatta le date per l'input type="date" (solo la parte YYYY-MM-DD)
-      dataPartenza:
-        viaggio && viaggio.dataPartenza
-          ? viaggio.dataPartenza.split("T")[0]
-          : "",
-      dataRitorno:
-        viaggio && viaggio.dataRitorno ? viaggio.dataRitorno.split("T")[0] : "",
-      descrizione: viaggio ? viaggio.descrizione : "",
-      costoViaggio: viaggio ? viaggio.costoViaggio : "",
-      immaginePrincipale: viaggio ? viaggio.immaginePrincipale : "", // Popola l'URL esistente
+      destinazione: viaggio?.destinazione || "",
+      dataPartenza: viaggio?.dataPartenza?.split("T")[0] || "",
+      dataRitorno: viaggio?.dataRitorno?.split("T")[0] || "",
+      descrizione: viaggio?.descrizione || "",
+      costoViaggio: viaggio?.costoViaggio || "",
+      immaginePrincipale: viaggio?.immaginePrincipale || "",
     });
-    setImageFile(null); // Resetta il file immagine
+    setSelectedFiles([]);
     setModalMessage("");
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setSelectedFiles([]);
     setCurrentViaggio(null);
     setFormData({
       destinazione: "",
@@ -103,29 +90,24 @@ function AdminViaggioManagementPage() {
       costoViaggio: "",
       immaginePrincipale: "",
     });
-    setImageFile(null);
   };
 
-  // Gestione input del form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Gestione selezione file immagine
   const handleFileChange = (e) => {
-    setImageFile(e.target.files[0]);
+    setSelectedFiles(Array.from(e.target.files));
   };
 
-  // Gestione salvataggio (aggiunta o modifica) viaggio
   const handleSaveViaggio = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setModalMessage("");
 
     try {
-      // I campi di formData corrispondono ai campi dell'entità Viaggio
-      let viaggioDataToSend = {
+      const viaggioDataToSend = {
         destinazione: formData.destinazione,
         dataPartenza: formData.dataPartenza,
         dataRitorno: formData.dataRitorno,
@@ -133,72 +115,62 @@ function AdminViaggioManagementPage() {
         costoViaggio: parseFloat(formData.costoViaggio),
       };
 
-      let savedViaggio; // Questo sarà un ViaggioResponseDto
+      let savedViaggio;
       if (currentViaggio) {
-        // Modifica viaggio esistente
-        viaggioDataToSend.id = currentViaggio.id;
         savedViaggio = await updateViaggio(
           currentViaggio.id,
           viaggioDataToSend
         );
       } else {
-        // Crea nuovo viaggio
         savedViaggio = await createViaggio(viaggioDataToSend);
       }
 
-      // Se c'è un file immagine, caricalo
-      if (imageFile) {
-        await uploadViaggioImage(savedViaggio.id, imageFile);
+      if (selectedFiles.length > 0) {
+        await uploadMultipleViaggioImages(savedViaggio.id, selectedFiles);
       }
 
       setModalMessage("Viaggio salvato con successo!");
-      await fetchViaggi(); // Ricarica la lista dei viaggi
-      setTimeout(() => handleCloseModal(), 1500); // Chiudi il modale dopo un breve ritardo
+      await fetchViaggi();
+      setTimeout(() => handleCloseModal(), 1500);
     } catch (err) {
-      console.error("Errore nel salvare il viaggio:", err);
-      setModalMessage(`Errore nel salvare il viaggio: ${err.message || err}`);
+      setModalMessage(`Errore: ${err.message || err}`);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Gestione eliminazione viaggio
+  const handleUploadImages = async (viaggioId) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.multiple = true;
+    input.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        try {
+          await uploadMultipleViaggioImages(viaggioId, files);
+          await fetchViaggi();
+          alert("Immagini caricate con successo");
+        } catch (err) {
+          alert("Errore nel caricamento immagini");
+        }
+      }
+    };
+    input.click();
+  };
+
   const handleDeleteViaggio = async (id) => {
-    if (!window.confirm("Sei sicuro di voler eliminare questo viaggio?")) {
-      return;
-    }
-    setLoading(true); // Mostra lo spinner mentre elimina
+    if (!window.confirm("Confermi eliminazione del viaggio?")) return;
+    setLoading(true);
     try {
       await deleteViaggio(id);
-      await fetchViaggi(); // Ricarica la lista
-    } catch (err) {
-      console.error("Errore nell'eliminare il viaggio:", err);
-      setError("Impossibile eliminare il viaggio. Riprova.");
+      await fetchViaggi();
+    } catch {
+      setError("Errore eliminazione viaggio");
     } finally {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Caricamento...</span>
-        </Spinner>
-        <p className="mt-2">Caricamento dati viaggi...</p>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="mt-5">
-        <Alert variant="danger" className="text-center">
-          {error}
-        </Alert>
-      </Container>
-    );
-  }
 
   return (
     <Container className="mt-5">
@@ -209,69 +181,73 @@ function AdminViaggioManagementPage() {
         </Button>
       </div>
 
-      {viaggi.length === 0 ? (
-        <Alert variant="info" className="text-center">
-          Nessun viaggio presente. Aggiungine uno!
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" />
+        </div>
+      ) : error ? (
+        <Alert variant="danger" className="text-center">
+          {error}
         </Alert>
+      ) : viaggi.length === 0 ? (
+        <Alert variant="info">Nessun viaggio disponibile.</Alert>
       ) : (
-        <Table striped bordered hover responsive className="shadow-sm">
+        <Table striped bordered hover responsive>
           <thead>
             <tr>
               <th>ID</th>
               <th>Destinazione</th>
               <th>Partenza</th>
               <th>Ritorno</th>
-              <th>costoViaggio</th>
+              <th>Costo</th>
               <th>Immagine</th>
               <th>Azioni</th>
             </tr>
           </thead>
           <tbody>
-            {viaggi.map((viaggio) => (
-              <tr key={viaggio.id}>
-                <td>{viaggio.id}</td>
-                <td>{viaggio.destinazione}</td>
-                {/* Formatta le date per la visualizzazione */}
+            {viaggi.map((v) => (
+              <tr key={v.id}>
+                <td>{v.id}</td>
+                <td>{v.destinazione}</td>
+                <td>{new Date(v.dataPartenza).toLocaleDateString()}</td>
+                <td>{new Date(v.dataRitorno).toLocaleDateString()}</td>
+                <td>€ {v.costoViaggio.toFixed(2)}</td>
                 <td>
-                  {viaggio.dataPartenza
-                    ? new Date(viaggio.dataPartenza).toLocaleDateString("it-IT")
-                    : "N/A"}
-                </td>
-                <td>
-                  {viaggio.dataRitorno
-                    ? new Date(viaggio.dataRitorno).toLocaleDateString("it-IT")
-                    : "N/A"}
-                </td>
-                <td>€ {viaggio.costoViaggio.toFixed(2)}</td>
-                <td>
-                  {viaggio.immaginePrincipale ? (
+                  {v.immaginePrincipale ? (
                     <img
-                      src={viaggio.immaginePrincipale}
-                      alt={viaggio.destinazione}
+                      src={v.immaginePrincipale}
+                      alt={v.destinazione}
                       style={{
                         width: "50px",
                         height: "50px",
                         objectFit: "cover",
-                        borderRadius: "5px",
                       }}
                     />
                   ) : (
-                    <span>N/A</span>
+                    "N/A"
                   )}
                 </td>
                 <td>
                   <Button
-                    variant="warning"
                     size="sm"
+                    variant="warning"
                     className="me-2"
-                    onClick={() => handleShowModal(viaggio)}
+                    onClick={() => handleShowModal(v)}
                   >
                     Modifica
                   </Button>
                   <Button
-                    variant="danger"
                     size="sm"
-                    onClick={() => handleDeleteViaggio(viaggio.id)}
+                    variant="info"
+                    className="me-2"
+                    onClick={() => handleUploadImages(v.id)}
+                  >
+                    Carica Immagini
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleDeleteViaggio(v.id)}
                   >
                     Elimina
                   </Button>
@@ -282,11 +258,10 @@ function AdminViaggioManagementPage() {
         </Table>
       )}
 
-      {/* Modale per Aggiungi/Modifica Viaggio */}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>
-            {currentViaggio ? "Modifica Viaggio" : "Aggiungi Nuovo Viaggio"}
+            {currentViaggio ? "Modifica Viaggio" : "Nuovo Viaggio"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -298,17 +273,16 @@ function AdminViaggioManagementPage() {
             </Alert>
           )}
           <Form onSubmit={handleSaveViaggio}>
-            <Form.Group className="mb-3" controlId="formDestinazione">
+            <Form.Group className="mb-3">
               <Form.Label>Destinazione</Form.Label>
               <Form.Control
-                type="text"
                 name="destinazione"
                 value={formData.destinazione}
                 onChange={handleChange}
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formDataPartenza">
+            <Form.Group className="mb-3">
               <Form.Label>Data Partenza</Form.Label>
               <Form.Control
                 type="date"
@@ -318,7 +292,7 @@ function AdminViaggioManagementPage() {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formDataRitorno">
+            <Form.Group className="mb-3">
               <Form.Label>Data Ritorno</Form.Label>
               <Form.Control
                 type="date"
@@ -328,71 +302,55 @@ function AdminViaggioManagementPage() {
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formDescrizione">
+            <Form.Group className="mb-3">
               <Form.Label>Descrizione</Form.Label>
               <Form.Control
                 as="textarea"
-                rows={3}
+                rows={2}
                 name="descrizione"
                 value={formData.descrizione}
                 onChange={handleChange}
                 required
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formPrezzo">
-              <Form.Label>costoViaggio</Form.Label>
+            <Form.Group className="mb-3">
+              <Form.Label>Costo</Form.Label>
               <Form.Control
                 type="number"
+                step="0.01"
                 name="costoViaggio"
-                value={formData.prezzo}
+                value={formData.costoViaggio}
                 onChange={handleChange}
                 required
-                step="0.01"
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="formImmagine">
-              <Form.Label>Carica Immagine (opzionale)</Form.Label>
+            <Form.Group className="mb-3">
+              <Form.Label>Immagini</Form.Label>
               <Form.Control
                 type="file"
                 onChange={handleFileChange}
                 accept="image/*"
+                multiple
               />
-              {formData.immagineUrl && !imageFile && (
-                <div className="mt-2">
-                  <small>Immagine attuale:</small>
-                  <img
-                    src={formData.immagineUrl}
-                    alt="Anteprima"
-                    style={{
-                      width: "100px",
-                      height: "auto",
-                      display: "block",
-                      marginTop: "5px",
-                    }}
-                  />
+              {selectedFiles.length > 0 && (
+                <div className="d-flex gap-2 mt-2">
+                  {selectedFiles.map((file, i) => (
+                    <img
+                      key={i}
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ))}
                 </div>
               )}
             </Form.Group>
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-100"
-              disabled={submitting}
-            >
-              {submitting ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  />{" "}
-                  Salvataggio...
-                </>
-              ) : (
-                "Salva Viaggio"
-              )}
+            <Button type="submit" className="w-100" disabled={submitting}>
+              {submitting ? "Salvataggio..." : "Salva Viaggio"}
             </Button>
           </Form>
         </Modal.Body>

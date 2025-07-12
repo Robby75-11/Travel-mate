@@ -38,18 +38,19 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
         transition: "transform 0.2s ease-in-out",
       }}
     >
-      <Card.Img
-        variant="top"
-        src={immagine}
-        alt={`Immagine di ${destinazione}`}
-        style={{
-          height: "200px",
-          objectFit: "cover",
-          borderTopLeftRadius: "16px",
-          borderTopRightRadius: "16px",
-        }}
-      />
-
+      <Link to={`/trips/${id}`}>
+        <Card.Img
+          variant="top"
+          src={immagine}
+          alt={`Immagine di ${destinazione}`}
+          style={{
+            height: "200px",
+            objectFit: "cover",
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+          }}
+        />
+      </Link>
       <Card.Body className="d-flex flex-column">
         <Card.Title className="fw-semibold fs-5 text-capitalize">
           {destinazione}

@@ -12,6 +12,8 @@ import {
   Form,
 } from "react-bootstrap";
 import { getHotelById, uploadHotelImage } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function HotelDetailPage() {
   const { id } = useParams(); // Ottiene l'ID dell'hotel dall'URL (es. /hotels/123 -> id = "123")
@@ -19,26 +21,15 @@ function HotelDetailPage() {
   const [loading, setLoading] = useState(true); // Stato per il caricamento
   const [error, setError] = useState(null); // Stato per gli errori
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = async () => {
-    if (!selectedFiles.length) return;
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-    setUploading(true);
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append("files", file); // corrisponde a @RequestParam("files") nel backend
-    });
-
-    try {
-      const updatedHotel = await uploadHotelImage(id, formData);
-      setHotel(updatedHotel); // Aggiorna l’hotel con la nuova immagine
-      setSelectedFiles([]); // Reset del file selezionato
-    } catch (err) {
-      alert("Errore durante l'upload dell'immagine.");
-      console.error(err);
-    } finally {
-      setUploading(false);
+  const handlePrenotaClick = () => {
+    if (!isAuthenticated) {
+      navigate("/login"); // Reindirizza al login
+    } else {
+      navigate(`/book-hotel/${hotel.id}`); // Vai alla pagina di prenotazione
     }
   };
 
@@ -141,8 +132,7 @@ function HotelDetailPage() {
 
               <div className="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
                 <Button
-                  as={Link}
-                  to={`/book-hotel/${hotel.id}`}
+                  onClick={handlePrenotaClick}
                   variant="primary"
                   size="lg"
                 >

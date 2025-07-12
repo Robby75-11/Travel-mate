@@ -11,12 +11,25 @@ import {
   Carousel,
 } from "react-bootstrap";
 import { getViaggioById } from "../api.js";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function ViaggioDetailPage() {
   const { id } = useParams();
   const [viaggio, setViaggio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePrenotaClick = () => {
+    if (!isAuthenticated) {
+      navigate("/login"); // Reindirizza al login
+    } else {
+      navigate(`/book-trips/${viaggio.id}`); // Vai alla pagina di prenotazione
+    }
+  };
 
   useEffect(() => {
     const fetchViaggioDetails = async () => {
@@ -134,8 +147,7 @@ function ViaggioDetailPage() {
 
               <div className="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
                 <Button
-                  as={Link}
-                  to={`/book-trip/${viaggio.id}`}
+                  onClick={handlePrenotaClick}
                   variant="primary"
                   size="lg"
                 >

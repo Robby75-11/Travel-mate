@@ -1,4 +1,5 @@
-import React from "react";
+import { useAuth } from "../contexts/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 import { Card, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -15,6 +16,17 @@ const CardVolo = ({ volo }) => {
     dataOraArrivo,
     costoVolo,
   } = volo;
+
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handlePrenotaClick = () => {
+    if (!isAuthenticated) {
+      navigate("/login"); // Reindirizza al login
+    } else {
+      navigate(`/book-hotel/${hotel.id}`); // Vai alla pagina di prenotazione
+    }
+  };
 
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
@@ -62,8 +74,7 @@ const CardVolo = ({ volo }) => {
           </Badge>
 
           <Button
-            as={Link}
-            to={`/flights/${id}/prenota`}
+            onClick={handlePrenotaClick}
             variant="primary"
             size="sm"
             className="w-100 mt-2"

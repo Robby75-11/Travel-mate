@@ -106,13 +106,26 @@ export const deleteHotel = async (id) => {
 };
 
 // Carica l'immagine di un hotel (richiede ruolo AMMINISTRATORE)
-export const uploadHotelImage = async (id, formData) => {
+export const uploadHotelImage = async (id, files) => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("files", file); // 'files' deve combaciare con @RequestParam("files") nel backend
+  });
+
   try {
-    const token = localStorage.getItem("jwtToken"); // 🔽 recupera token
-    const response = await api.patch(`/hotel/${id}/immagine`, formData, {});
+    const response = await axios.patch(
+      `http://localhost:8080/hotel/${id}/immagine`, // Assicurati che l'endpoint sia corretto
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          // NON impostare 'Content-Type' manualmente per FormData
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : error.message;
+    throw error.response?.data || error.message;
   }
 };
 
@@ -132,6 +145,7 @@ export const getAllUsers = async () => {
 export const getUserById = async (id) => {
   try {
     const response = await api.get(`/utenti/${id}`);
+    console.log("Risposta API /utenti:", response.data);
     return response.data;
   } catch (error) {
     throw error.response ? error.response.data : error.message;
@@ -148,6 +162,17 @@ export const updateUser = async (id, userData) => {
   }
 };
 
+// Aggiorna il ruolo di un utente (es. da UTENTE a AMMINISTRATORE)
+export const updateUserRole = async (id, ruolo) => {
+  try {
+    const response = await api.patch(`/utenti/${id}/ruolo`, null, {
+      params: { ruolo }, // viene passato come query parameter ?ruolo=ROLE_AMMINISTRATORE
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
 // Elimina un utente
 export const deleteUser = async (id) => {
   try {
@@ -158,33 +183,26 @@ export const deleteUser = async (id) => {
   }
 };
 
-// Aggiorna il ruolo di un utente (es. da UTENTE a AMMINISTRATORE)
-export const updateUserRole = async (id, newRole) => {
-  try {
-    const response = await api.patch(`/utenti/${id}/role`, newRole, {
-      headers: {
-        "Content-Type": "text/plain", // Specifica il Content-Type se il backend si aspetta una stringa semplice
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};
-
 // --- 4. Metodi per Viaggi (Endpoint: /viaggi) ---
 
 // Carica l'immagine di un viaggio (richiede ruolo AMMINISTRATORE)
-export const uploadViaggioImage = async (id, file) => {
+export const uploadMultipleViaggioImages = async (id, files) => {
   const formData = new FormData();
-  formData.append("file", file); // 'file' deve corrispondere al nome del parametro nel backend
-  try {
-    // Axios gestisce automaticamente il Content-Type 'multipart/form-data' per FormData
-    const response = await api.patch(`/viaggi/${id}/immagine`, formData); // Endpoint per l'upload immagine viaggio
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
+  files.forEach((file) => {
+    formData.append("files", file); // Deve combaciare con @RequestParam("files")
+  });
+
+  const response = await axios.patch(
+    `http://localhost:8080/viaggi/${id}/immagini`,
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+      },
+    }
+  );
+
+  return response.data;
 };
 
 // Recupera tutti i viaggi

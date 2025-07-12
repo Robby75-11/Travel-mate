@@ -197,6 +197,8 @@ function AdminVoloManagementPage() {
                 <td>{volo.numeroVolo}</td>
                 <td>{volo.compagniaAerea}</td>
                 <td>
+                  {volo.aeroportoPartenza}
+                  <td>{volo.aeroportoArrivo}</td>
                   {new Date(volo.dataOraPartenza).toLocaleString("it-IT")}
                 </td>
                 <td>{new Date(volo.dataOraArrivo).toLocaleString("it-IT")}</td>

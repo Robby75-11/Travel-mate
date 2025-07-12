@@ -86,7 +86,7 @@ function AdminGestionePrenotazionePage() {
       const emailRequest = {
         idPrenotazione: id,
         testo: formData.messaggioEmail,
-        oggetto: "Conferma Prenotazione", // opzionale se vuoi personalizzarlo
+        oggetto: "Conferma Prenotazione",
       };
 
       await inviaEmailConferma(emailRequest);
