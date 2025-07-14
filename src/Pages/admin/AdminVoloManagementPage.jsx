@@ -186,6 +186,8 @@ function AdminVoloManagementPage() {
               <th>Compagnia</th>
               <th>Partenza</th>
               <th>Arrivo</th>
+              <th>Data/Ora Partenza</th>
+              <th>Data/Ora Arrivo</th>
               <th>costoVolo</th>
               <th>Azioni</th>
             </tr>
@@ -196,9 +198,9 @@ function AdminVoloManagementPage() {
                 <td>{volo.id}</td>
                 <td>{volo.numeroVolo}</td>
                 <td>{volo.compagniaAerea}</td>
+                <td>{volo.aeroportoPartenza}</td>
+                <td>{volo.aeroportoArrivo}</td>
                 <td>
-                  {volo.aeroportoPartenza}
-                  <td>{volo.aeroportoArrivo}</td>
                   {new Date(volo.dataOraPartenza).toLocaleString("it-IT")}
                 </td>
                 <td>{new Date(volo.dataOraArrivo).toLocaleString("it-IT")}</td>

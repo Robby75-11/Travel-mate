@@ -7,7 +7,6 @@ import api from "../api"; // Assicurati di importare le funzioni API necessarie
 const RecensionePage = () => {
   const { currentUser } = useAuth(); // Ottieni l'utente corrente dal contesto di autenticazione
   const { tipo, id } = useParams();
-  console.log("Tipo:", tipo, "ID:", id); // tipo: "viaggio" o "hotel"
   const [recensioni, setRecensioni] = useState([]);
   const [contenuto, setContenuto] = useState("");
   const [valutazione, setValutazione] = useState(5);

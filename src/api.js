@@ -1,5 +1,4 @@
 import axios from "axios";
-
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
   baseURL: "http://localhost:8080",
@@ -114,12 +113,11 @@ export const uploadHotelImage = async (id, files) => {
 
   try {
     const response = await axios.patch(
-      `http://localhost:8080/hotel/${id}/immagine`, // Assicurati che l'endpoint sia corretto
+      `http://localhost:8080/hotel/${id}/immagine`,
       formData,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          // NON impostare 'Content-Type' manualmente per FormData
         },
       }
     );

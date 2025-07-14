@@ -9,7 +9,6 @@ import {
   Spinner,
   Alert,
   Carousel,
-  Form,
 } from "react-bootstrap";
 import { getHotelById, uploadHotelImage } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
 import { useAuth } from "../contexts/AuthContext";
@@ -20,7 +19,6 @@ function HotelDetailPage() {
   const [hotel, setHotel] = useState(null); // Stato per i dettagli dell'hotel
   const [loading, setLoading] = useState(true); // Stato per il caricamento
   const [error, setError] = useState(null); // Stato per gli errori
-  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -38,7 +36,6 @@ function HotelDetailPage() {
       try {
         const data = await getHotelById(id); // Chiama l'API per ottenere i dettagli dell'hotel
         setHotel(data);
-        console.log("HOTEL DETTAGLI:", data);
       } catch (err) {
         console.error("Errore nel recuperare i dettagli dell'hotel:", err);
         setError(

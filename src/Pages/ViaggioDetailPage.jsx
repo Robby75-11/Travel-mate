@@ -36,7 +36,6 @@ function ViaggioDetailPage() {
       try {
         const data = await getViaggioById(id);
         setViaggio(data);
-        console.log("Immagini viaggio:", data.immaginiUrl);
       } catch (err) {
         console.error("Errore nel recuperare i dettagli del viaggio:", err);
         setError(

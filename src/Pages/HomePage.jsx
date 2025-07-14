@@ -13,8 +13,12 @@ function HomePage() {
   const [hotels, setHotels] = useState([]);
   const [viaggi, setViaggi] = useState([]);
   const [voli, setVoli] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchBy, setSearchBy] = useState("nome");
+  const [filters, setFilters] = useState({
+    partenza: "",
+    destinazione: "",
+    data: "",
+    passeggeri: 1,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,33 +38,38 @@ function HomePage() {
     fetchData();
   }, []);
 
-  // Filtra hotel e viaggi in base al searchTerm
-  // Funzione helper per normalizzare il confronto (case insensitive)
-  const match = (value) =>
-    value?.toString().toLowerCase().includes(searchTerm.toLowerCase());
-
   // Filtri dinamici per hotel
   const filteredHotels = hotels.filter((h) => {
-    if (searchBy === "nome") return match(h.nome);
-    if (searchBy === "indirizzo") return match(h.indirizzo);
-    if (searchBy === "prezzo") return match(h.prezzoNotte);
-    return true;
+    const matchCity = h.citta
+      ?.toLowerCase()
+      .includes(filters.destinazione.toLowerCase());
+
+    return matchCity;
   });
 
   // Filtri dinamici per viaggi
   const filteredViaggi = viaggi.filter((v) => {
-    if (searchBy === "nome") return match(v.destinazione);
-    if (searchBy === "indirizzo") return match(v.descrizione);
-    if (searchBy === "prezzo") return match(v.costoViaggio);
-    return true;
+    const matchDest = v.destinazione
+      ?.toLowerCase()
+      .includes(filters.destinazione.toLowerCase());
+    const matchData = filters.data
+      ? v.dataPartenza?.startsWith(filters.data)
+      : true;
+    return matchDest && matchData;
   });
 
   // Filtri dinamici per voli
   const filteredVoli = voli.filter((v) => {
-    if (searchBy === "nome") return match(v.compagnia);
-    if (searchBy === "indirizzo") return match(v.destinazione);
-    if (searchBy === "prezzo") return match(v.costoVolo);
-    return true;
+    const matchPartenza = v.partenza
+      ?.toLowerCase()
+      .includes(filters.partenza.toLowerCase());
+    const matchDest = v.destinazione
+      ?.toLowerCase()
+      .includes(filters.destinazione.toLowerCase());
+    const matchData = filters.data
+      ? v.dataPartenza?.startsWith(filters.data)
+      : true;
+    return matchPartenza && matchDest && matchData;
   });
   return (
     <Container className="mt-4">
@@ -93,6 +102,15 @@ function HomePage() {
             >
               Cerca Hotel
             </Button>
+            <Button
+              as={Link}
+              to="/flights"
+              variant="outline-info"
+              size="lg"
+              className="px-4"
+            >
+              Prenota Voli
+            </Button>
           </div>
         </Col>
       </Row>
@@ -100,12 +118,7 @@ function HomePage() {
       {/* 🔎 Barra di ricerca */}
       <Row className="justify-content-center mb-3">
         <Col md={10}>
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            searchBy={searchBy}
-            onSearchByChange={setSearchBy}
-          />
+          <SearchBar onSearch={setFilters} />
         </Col>
       </Row>
 
@@ -128,6 +141,7 @@ function HomePage() {
           </Col>
         ))}
       </Row>
+      {/* ✈️ Lista Voli */}
       <h3 className="mb-4">Voli Popolari</h3>
       <Row className="mb-5">
         {filteredVoli.slice(0, 3).map((volo) => (
@@ -213,12 +227,6 @@ function HomePage() {
           </Col>
         </Row>
       )}
-
-      {/* Puoi aggiungere altre sezioni qui, come:
-          - Viaggi in evidenza (con CardViaggio)
-          - Hotel popolari (con CardHotel)
-          - Una barra di ricerca completa
-      */}
     </Container>
   );
 }
