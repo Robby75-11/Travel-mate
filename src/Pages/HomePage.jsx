@@ -7,7 +7,6 @@ import CardViaggio from "../Components/CardViaggio";
 import CardVolo from "../Components/CardVolo";
 import SearchBar from "../Components/SearchBar";
 import { useState, useEffect } from "react";
-import LastMinute from "../Components/LastMinute";
 
 function HomePage() {
   const { isAuthenticated } = useAuth();
@@ -156,8 +155,6 @@ function HomePage() {
           <SearchBar onSearch={setFilters} />
         </Col>
       </Row>
-
-      <LastMinute hotels={hotels} voli={voli} />
 
       {/* 🏨 Lista Hotel */}
       <h3 className="mt-4 mb-3">Hotel Disponibili</h3>

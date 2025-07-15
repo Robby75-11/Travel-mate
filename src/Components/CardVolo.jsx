@@ -15,8 +15,12 @@ const CardVolo = ({ volo }) => {
     dataOraPartenza,
     dataOraArrivo,
     costoVolo,
+    immaginePrincipale,
   } = volo;
 
+  const immagine = immaginePrincipale?.trim()
+    ? immaginePrincipale
+    : "https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine";
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -37,17 +41,19 @@ const CardVolo = ({ volo }) => {
 
   return (
     <Card className="h-100 shadow-sm border-0" style={{ borderRadius: "16px" }}>
-      <div
-        className="d-flex justify-content-center align-items-center bg-light"
-        style={{
-          height: "200px",
-          fontSize: "4rem",
-          borderTopLeftRadius: "16px",
-          borderTopRightRadius: "16px",
-        }}
-      >
-        <i className="bi bi-airplane-engines text-primary"></i>
-      </div>
+      <Link to={`/flights/${id}`}>
+        <Card.Img
+          variant="top"
+          src={immagine}
+          alt={`Immagine volo ${compagniaAerea}`}
+          style={{
+            height: "200px",
+            objectFit: "cover",
+            borderTopLeftRadius: "16px",
+            borderTopRightRadius: "16px",
+          }}
+        />
+      </Link>
 
       <Card.Body className="d-flex flex-column">
         <Card.Title className="fw-semibold fs-5">
@@ -72,7 +78,15 @@ const CardVolo = ({ volo }) => {
           <Badge bg="info" className="mb-2 fs-6 px-3 py-2">
             Costo volo: €{costoVolo?.toFixed(2) ?? "N.D."}
           </Badge>
-
+          <Button
+            as={Link}
+            to={`/flights/${id}`}
+            variant="outline-info"
+            size="sm"
+            className="flex-fill"
+          >
+            Vedi Dettagli
+          </Button>
           <Button
             onClick={handlePrenotaClick}
             variant="primary"

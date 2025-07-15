@@ -373,15 +373,19 @@ export const deleteVolo = async (voloId) => {
 // Carica l'immagine di un volo (es. aereo o tratta visiva)
 export const uploadVoloImage = async (id, file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("files", file);
   try {
-    const response = await api.patch(`/voli/${id}/immagine`, formData);
+    const response = await api.patch(`/voli/${id}/immagine`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : error.message;
+    throw error.response?.data || error.message;
   }
 };
-
 // --- 7. Metodi per Prenotazioni (Endpoint: /prenotazioni) ---
 export const getAllPrenotazioni = async () => {
   try {

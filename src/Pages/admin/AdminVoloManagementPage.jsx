@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Table,
@@ -9,7 +9,13 @@ import {
   Form,
 } from "react-bootstrap";
 
-import { getAllVoli, createVolo, updateVolo, deleteVolo } from "../../api.js";
+import {
+  getAllVoli,
+  createVolo,
+  updateVolo,
+  deleteVolo,
+  uploadVoloImage,
+} from "../../api.js";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +35,7 @@ function AdminVoloManagementPage() {
     aeroportoArrivo: "",
     costoVolo: "",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
@@ -74,6 +81,7 @@ function AdminVoloManagementPage() {
       aeroportoArrivo: volo ? volo.aeroportoArrivo : "",
       costoVolo: volo ? volo.costoVolo : "",
     });
+    setSelectedImage(null);
     setModalMessage("");
     setShowModal(true);
   };
@@ -90,6 +98,7 @@ function AdminVoloManagementPage() {
       aeroportoArrivo: "",
       costoVolo: "",
     });
+    setSelectedImage(null);
   };
 
   // Gestione input del form (placeholder)
@@ -105,18 +114,26 @@ function AdminVoloManagementPage() {
     setModalMessage("");
 
     try {
-      // Qui andrebbe la logica di createVolo o updateVolo
       let savedVolo;
+
       if (currentVolo) {
         savedVolo = await updateVolo(currentVolo.id, formData);
       } else {
         savedVolo = await createVolo(formData);
       }
-      await fetchVoli(); // aggiorna la lista
-      setModalMessage("Volo salvato con successo!");
 
-      setModalMessage("Funzionalità di gestione voli in sviluppo!");
-      // await fetchVoli();
+      // Upload immagine se selezionata e volo creato/modificato con successo
+      if (selectedImage && savedVolo?.id) {
+        try {
+          await uploadVoloImage(savedVolo.id, selectedImage);
+        } catch (uploadErr) {
+          console.error("Errore nell'upload immagine:", uploadErr);
+          setModalMessage("Volo salvato ma errore nel caricamento immagine.");
+        }
+      }
+
+      await fetchVoli(); // aggiorna la lista con l'immagine
+      setModalMessage("Volo salvato con successo!");
       setTimeout(() => handleCloseModal(), 1500);
     } catch (err) {
       console.error("Errore nel salvare il volo:", err);
@@ -125,7 +142,6 @@ function AdminVoloManagementPage() {
       setSubmitting(false);
     }
   };
-
   // Gestione eliminazione volo (placeholder)
   const handleDeleteVolo = async (id) => {
     if (!window.confirm("Sei sicuro di voler eliminare questo volo?")) {
@@ -189,6 +205,7 @@ function AdminVoloManagementPage() {
               <th>Data/Ora Partenza</th>
               <th>Data/Ora Arrivo</th>
               <th>costoVolo</th>
+              <th>Immagine</th>
               <th>Azioni</th>
             </tr>
           </thead>
@@ -205,6 +222,22 @@ function AdminVoloManagementPage() {
                 </td>
                 <td>{new Date(volo.dataOraArrivo).toLocaleString("it-IT")}</td>
                 <td>€ {volo.costoVolo?.toFixed(2)}</td>
+                <td>
+                  {volo.immaginePrincipale ? (
+                    <img
+                      src={volo.immaginePrincipale}
+                      alt="Copertina volo"
+                      style={{
+                        width: "100px",
+                        height: "60px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  ) : (
+                    <span className="text-muted">Nessuna</span>
+                  )}
+                </td>
                 <td>
                   <Button
                     variant="warning"
@@ -314,6 +347,42 @@ function AdminVoloManagementPage() {
                 onChange={handleChange}
                 required
               />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formImmagine">
+              <Form.Label>Immagine Volo</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={(e) => setSelectedImage(e.target.files[0])}
+              />
+              {selectedImage ? (
+                <div className="mt-2 text-center">
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Anteprima"
+                    style={{
+                      width: "150px",
+                      height: "100px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+              ) : currentVolo?.immaginePrincipale ? (
+                <div className="mt-2 text-center">
+                  <img
+                    src={currentVolo.immaginePrincipale}
+                    alt="Immagine esistente"
+                    style={{
+                      width: "150px",
+                      height: "100px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <small className="text-muted">Immagine attuale</small>
+                </div>
+              ) : null}
             </Form.Group>
 
             <div className="d-flex justify-content-end">

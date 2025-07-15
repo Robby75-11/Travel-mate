@@ -27,6 +27,7 @@ import VoloDetailPage from "./Pages/VoloDetailPage.jsx"; // Pagina per i dettagl
 import VoloListPage from "./Pages/VoloListPage.jsx"; // la pagina dei voli
 import VoloBookingPage from "./Pages/VoloBookingPage.jsx"; // Pagina per la prenotazione di un volo
 import RecensionePage from "./Pages/RecensionePage.jsx"; // Pagina per le recensioni dei viaggi
+import LastMinutePage from "./Pages/LastMinutePage.jsx"; // Pagina per le offerte last minute
 
 function App() {
   return (
@@ -62,7 +63,7 @@ function App() {
             <Route path="/my-bookings" element={<MyBookingsPage />} />
             {/* Rotta per le recensioni */}
             <Route path="/recensioni/:tipo/:id" element={<RecensionePage />} />
-
+            <Route path="/last-minute" element={<LastMinutePage />} />
             {/* Rotte del Backoffice (Accesso solitamente riservato agli Amministratori) */}
             <Route
               path="/admin/hotels"

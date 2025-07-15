@@ -1,4 +1,3 @@
-import React from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -6,6 +5,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Button from "react-bootstrap/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { NavLink } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBed,
+  faPlane,
+  faCompass,
+  faHouse,
+} from "@fortawesome/free-solid-svg-icons";
 
 function NavBar() {
   const { isAuthenticated, userRole, currentUser, handleLogout } = useAuth();
@@ -30,16 +37,21 @@ function NavBar() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
+              <FontAwesomeIcon icon={faHouse} className="me-2 text-light" />{" "}
               Home
             </Nav.Link>
+
             <Nav.Link as={Link} to="/hotels">
-              Hotel
+              <FontAwesomeIcon icon={faBed} className="me-2" /> Hotel
             </Nav.Link>
             <Nav.Link as={Link} to="/flights">
-              Voli
+              <FontAwesomeIcon icon={faPlane} className="me-2" /> Voli
             </Nav.Link>
             <Nav.Link as={Link} to="/trips">
-              Viaggi
+              <FontAwesomeIcon icon={faCompass} className="me-2" /> Viaggi
+            </Nav.Link>
+            <Nav.Link as={NavLink} to="/last-minute">
+              <i className="bi bi-fire me-1 text-warning"></i> Last Minute
             </Nav.Link>
             {isAuthenticated && userRole === "AMMINISTRATORE" && (
               <NavDropdown title="Backoffice" id="backoffice-nav-dropdown">
