@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap"; // Importa i componenti Bootstrap
 import { registerUser } from "../api"; // Importa la funzione API per la registrazione
 import { useNavigate } from "react-router-dom"; // Per reindirizzare l'utente dopo la registrazione

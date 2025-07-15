@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Form, Button, Spinner, Alert } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx";
-import api from "../api"; // Assicurati di importare le funzioni API necessarie
+import { getRecensioniByTipoAndId, createRecensione } from "../api";
 
 const RecensionePage = () => {
   const { currentUser } = useAuth(); // Ottieni l'utente corrente dal contesto di autenticazione
@@ -17,21 +17,10 @@ const RecensionePage = () => {
   const fetchRecensioni = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/recensioni/${tipo}/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Errore nel caricamento delle recensioni");
-      }
-      const data = await response.json();
+      const data = await getRecensioniByTipoAndId(tipo, id);
       setRecensioni(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Errore nel caricamento delle recensioni");
     } finally {
       setLoading(false);
     }
@@ -50,11 +39,8 @@ const RecensionePage = () => {
         valutazione,
         [tipo]: { id: parseInt(id) }, // es. { hotel: { id: 1 } }
       };
-      console.log("🔍 Endpoint:", postEndpoint);
-      console.log("📦 Body:", reviewBody);
-      console.log("🔐 Token:", localStorage.getItem("jwtToken"));
 
-      await api.post(postEndpoint, reviewBody);
+      await createRecensione(tipo, reviewBody);
 
       setContenuto("");
       setValutazione(5);

@@ -6,10 +6,11 @@ import CardHotel from "../Components/CardHotel";
 import CardViaggio from "../Components/CardViaggio";
 import CardVolo from "../Components/CardVolo";
 import SearchBar from "../Components/SearchBar";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import LastMinute from "../Components/LastMinute";
 
 function HomePage() {
-  const { isAuthenticated } = useAuth(); // Ottieni lo stato di autenticazione
+  const { isAuthenticated } = useAuth();
   const [hotels, setHotels] = useState([]);
   const [viaggi, setViaggi] = useState([]);
   const [voli, setVoli] = useState([]);
@@ -115,12 +116,48 @@ function HomePage() {
         </Col>
       </Row>
 
+      {/* Sezione Call to Action per Login/Registrazione (visibile solo se NON autenticato) */}
+      {!isAuthenticated && ( // Mostra questa sezione solo se l'utente NON è autenticato
+        <Row className="justify-content-center text-center mb-5">
+          <Col md={8}>
+            <Card className="p-4 shadow-lg bg-light">
+              <Card.Body>
+                <h3 className="mb-3">Pronto a Partire?</h3>
+                <p className="text-muted">
+                  Accedi o registrati per gestire le tue prenotazioni e scoprire
+                  offerte personalizzate.
+                </p>
+                <Button
+                  as={Link}
+                  to="/login"
+                  variant="success"
+                  size="lg"
+                  className="me-2"
+                >
+                  Accedi
+                </Button>
+                <Button
+                  as={Link}
+                  to="/register"
+                  variant="outline-success"
+                  size="lg"
+                >
+                  Registrati
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      )}
+
       {/* 🔎 Barra di ricerca */}
       <Row className="justify-content-center mb-3">
         <Col md={10}>
           <SearchBar onSearch={setFilters} />
         </Col>
       </Row>
+
+      <LastMinute hotels={hotels} voli={voli} />
 
       {/* 🏨 Lista Hotel */}
       <h3 className="mt-4 mb-3">Hotel Disponibili</h3>
@@ -132,6 +169,15 @@ function HomePage() {
         ))}
       </Row>
 
+      {/* ✈️ Lista Voli */}
+      <h3 className="mb-4"></h3>
+      <Row className="mb-5">
+        {filteredVoli.slice(0, 3).map((volo) => (
+          <Col key={volo.id} md={4} className="mb-4">
+            <CardVolo volo={volo} />
+          </Col>
+        ))}
+      </Row>
       {/* ✈️ Lista Viaggi */}
       <h3 className="mt-5 mb-3">Viaggi Disponibili</h3>
       <Row xs={1} md={2} lg={3} className="g-4">
@@ -141,16 +187,6 @@ function HomePage() {
           </Col>
         ))}
       </Row>
-      {/* ✈️ Lista Voli */}
-      <h3 className="mb-4">Voli Popolari</h3>
-      <Row className="mb-5">
-        {filteredVoli.slice(0, 3).map((volo) => (
-          <Col key={volo.id} md={4} className="mb-4">
-            <CardVolo volo={volo} />
-          </Col>
-        ))}
-      </Row>
-
       {/* Sezione "Perché Sceglierci" */}
       <Row className="mb-5 text-center">
         <Col md={4} className="mb-4">
@@ -193,40 +229,6 @@ function HomePage() {
           </Card>
         </Col>
       </Row>
-
-      {/* Sezione Call to Action per Login/Registrazione (visibile solo se NON autenticato) */}
-      {!isAuthenticated && ( // Mostra questa sezione solo se l'utente NON è autenticato
-        <Row className="justify-content-center text-center mb-5">
-          <Col md={8}>
-            <Card className="p-4 shadow-lg bg-light">
-              <Card.Body>
-                <h3 className="mb-3">Pronto a Partire?</h3>
-                <p className="text-muted">
-                  Accedi o registrati per gestire le tue prenotazioni e scoprire
-                  offerte personalizzate.
-                </p>
-                <Button
-                  as={Link}
-                  to="/login"
-                  variant="success"
-                  size="lg"
-                  className="me-2"
-                >
-                  Accedi
-                </Button>
-                <Button
-                  as={Link}
-                  to="/register"
-                  variant="outline-success"
-                  size="lg"
-                >
-                  Registrati
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      )}
     </Container>
   );
 }

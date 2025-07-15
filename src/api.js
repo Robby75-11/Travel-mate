@@ -257,23 +257,16 @@ export const deleteViaggio = async (id) => {
 
 // Crea una prenotazione per un viaggio (richiede utente loggato)
 export const createViaggioBooking = async (bookingData) => {
-  const token = localStorage.getItem("jwtToken");
-
-  const response = await fetch("/prenotazioni", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // 👉 NECESSARIO per autorizzazione
-    },
-    body: JSON.stringify(bookingData),
-  });
-
-  if (!response.ok) {
-    throw new Error("Errore nella prenotazione del viaggio");
+  try {
+    const response = await api.post("/prenotazioni", bookingData);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore nella prenotazione del viaggio"
+    );
   }
-
-  return await response.json();
 };
+
 // Recupera le prenotazioni dell'utente loggato
 export const getUserBookings = async () => {
   try {
@@ -419,4 +412,25 @@ export const deletePrenotazione = async (id) => {
   }
 };
 
+// --- 8. Metodi per Recensioni (Endpoint: /recensioni) ---
+
+// Recupera le recensioni per hotel o viaggio
+export const getRecensioniByTipoAndId = async (tipo, id) => {
+  try {
+    const response = await api.get(`/recensioni/${tipo}/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Invia una nuova recensione (hotel o viaggio)
+export const createRecensione = async (tipo, recensioneData) => {
+  try {
+    const response = await api.post(`/recensioni/${tipo}`, recensioneData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
 export default api;

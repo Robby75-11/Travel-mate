@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, Button, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
@@ -12,6 +11,7 @@ function CardHotel({ hotel }) {
     descrizione = "Nessuna descrizione disponibile",
     immaginePrincipale,
     prezzoNotte,
+    stelle = 0,
   } = hotel;
 
   const immagine = immaginePrincipale?.trim()
@@ -34,8 +34,16 @@ function CardHotel({ hotel }) {
         />
       </Link>
       <Card.Body className="d-flex flex-column">
-        <Card.Title className="fw-semibold fs-5">{nome}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">{indirizzo}</Card.Subtitle>
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Card.Title className="fw-semibold fs-5 mb-0">{nome}</Card.Title>
+          {stelle > 0 && (
+            <div className="text-warning small">
+              {Array(stelle).fill("⭐").join("")}
+            </div>
+          )}
+        </div>
+
+        <Card.Subtitle className="mb-1 text-muted">{indirizzo}</Card.Subtitle>
 
         <Card.Text
           className="flex-grow-1"

@@ -1,5 +1,5 @@
 // src/Pages/ViaggioListPage.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 import { getAllViaggi } from "../api.js"; // Importa la funzione API per recuperare i viaggi
 import CardViaggio from "../Components/CardViaggio.jsx"; // Importa il componente CardViaggio

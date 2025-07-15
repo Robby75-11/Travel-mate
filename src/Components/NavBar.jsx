@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 function NavBar() {
-  const { isAuthenticated, userRole, handleLogout } = useAuth();
+  const { isAuthenticated, userRole, currentUser, handleLogout } = useAuth();
   const navigate = useNavigate();
 
   const onLogout = () => {
@@ -81,7 +81,13 @@ function NavBar() {
             ) : (
               <>
                 <Navbar.Text className="me-3">
-                  Loggato come: <strong>{userRole}</strong>
+                  {" "}
+                  <strong>
+                    {currentUser?.nome
+                      ? `${currentUser.nome} ${currentUser.cognome}`
+                      : currentUser?.email}
+                  </strong>{" "}
+                  ({userRole})
                 </Navbar.Text>
                 <Button variant="outline-light" onClick={onLogout}>
                   Logout

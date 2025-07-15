@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Table,
@@ -28,6 +28,7 @@ function AdminHotelManagementPage() {
   const [currentHotel, setCurrentHotel] = useState(null);
   const [formData, setFormData] = useState({
     nome: "",
+    stelle: "",
     indirizzo: "",
     citta: "",
     descrizione: "",
@@ -73,6 +74,7 @@ function AdminHotelManagementPage() {
     setCurrentHotel(hotel);
     setFormData({
       nome: hotel?.nome || "",
+      stelle: hotel?.stelle || "",
       indirizzo: hotel?.indirizzo || "",
       citta: hotel?.citta || "",
       descrizione: hotel?.descrizione || "",
@@ -117,6 +119,7 @@ function AdminHotelManagementPage() {
       let result;
       const payload = {
         nome: formData.nome,
+        stelle: formData.stelle,
         indirizzo: formData.indirizzo,
         citta: formData.citta,
         descrizione: formData.descrizione,
@@ -201,6 +204,7 @@ function AdminHotelManagementPage() {
           <tr>
             <th>ID</th>
             <th>Nome</th>
+            <th>Stelle</th>
             <th>Indirizzo</th>
             <th>Città</th>
             <th>Prezzo</th>
@@ -213,6 +217,7 @@ function AdminHotelManagementPage() {
             <tr key={h.id}>
               <td>{h.id}</td>
               <td>{h.nome}</td>
+              <td>{h.stelle}</td>
               <td>{h.indirizzo}</td>
               <td>{h.citta}</td>
               <td>€{h.prezzoNotte.toFixed(2)}</td>
@@ -279,6 +284,15 @@ function AdminHotelManagementPage() {
                 required
                 onChange={onFormChange}
                 value={formData.nome}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Stelle</Form.Label>
+              <Form.Control
+                name="stelle"
+                required
+                onChange={onFormChange}
+                value={formData.stelle}
               />
             </Form.Group>
             <Form.Group>
