@@ -56,7 +56,7 @@ function App() {
             {/* Rotta per la prenotazione di un Hotel (usato da CardHotel) */}
             <Route path="/book-hotel/:id" element={<HotelBookingPage />} />
             {/* Rotta per la prenotazione di un Viaggio (usato da CardViaggio) */}
-            <Route path="/book-trips/:id" element={<ViaggioBookingPage />} />
+            <Route path="/book-trip/:id" element={<ViaggioBookingPage />} />
             {/* Rotta per la prenotazione di un Volo */}
             <Route path="/flights/:id/prenota" element={<VoloBookingPage />} />
             {/* Rotta per le prenotazioni dell'utente loggato */}

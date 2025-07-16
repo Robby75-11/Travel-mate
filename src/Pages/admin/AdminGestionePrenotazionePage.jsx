@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Table,
@@ -25,8 +25,9 @@ function AdminGestionePrenotazionePage() {
     statoPrenotazione: "",
     messaggioEmail: "",
   });
-  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
 
   const fetchPrenotazioni = async () => {
     try {
@@ -81,27 +82,62 @@ function AdminGestionePrenotazionePage() {
     }
   };
 
-  const handleEmail = async (id) => {
+  const handleEmail = async (id, showInModal = true) => {
+    setEmailSending(true);
+
+    if (showInModal) {
+      setMessage("📨 Invio email in corso...");
+    } else {
+      setMessage("📨 Invio email in corso...");
+    }
+
     try {
-      const emailRequest = {
+      await inviaEmailConferma({
         idPrenotazione: id,
         testo: formData.messaggioEmail,
         oggetto: "Conferma Prenotazione",
-      };
+      });
 
-      await inviaEmailConferma(emailRequest);
-      alert("✅ Email inviata con successo!");
+      if (showInModal) {
+        setMessage("✅ Email inviata con successo!");
+        setTimeout(() => {
+          setShowModal(false);
+          setMessage("");
+          setCurrent(null);
+        }, 2000);
+      } else {
+        setMessage("✅ Email inviata con successo!");
+        // Mostra messaggio temporaneo in alto
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+      }
     } catch (error) {
-      console.error("Errore invio email:", error);
-      alert("❌ Errore nell'invio dell'email");
+      const errorMsg = "❌ Errore nell'invio dell'email";
+      setMessage(errorMsg);
+      setTimeout(() => setMessage(""), 3000);
+    } finally {
+      setEmailSending(false);
     }
   };
-  if (loading) return <Spinner />;
-  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <Container className="mt-5">
       <h3>Gestione Prenotazioni</h3>
+      {message && (
+        <Alert
+          variant={
+            message.includes("✅")
+              ? "success"
+              : message.includes("❌")
+              ? "danger"
+              : "info"
+          }
+          className="mt-3"
+        >
+          {message}
+        </Alert>
+      )}
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -153,7 +189,8 @@ function AdminGestionePrenotazionePage() {
                   <Button
                     size="sm"
                     variant="success"
-                    onClick={() => handleEmail(p.id)}
+                    onClick={() => handleEmail(p.id, false)}
+                    disabled={emailSending}
                   >
                     Invia Email
                   </Button>
@@ -170,7 +207,21 @@ function AdminGestionePrenotazionePage() {
           <Modal.Title>Modifica Prenotazione #{current?.id}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {message && <Alert>{message}</Alert>}
+          {message && (
+            <Alert
+              variant={
+                message.includes("✅")
+                  ? "success"
+                  : message.includes("❌")
+                  ? "danger"
+                  : "info"
+              }
+              className="mt-2"
+            >
+              {message}
+            </Alert>
+          )}
+
           <Form onSubmit={handleSubmit}>
             <Form.Group>
               <Form.Label>Stato Prenotazione</Form.Label>
@@ -209,8 +260,9 @@ function AdminGestionePrenotazionePage() {
                 variant="success"
                 className="mt-3 ms-2"
                 onClick={() => handleEmail(current.id)}
+                disabled={emailSending}
               >
-                Invia Email
+                {emailSending ? "Invio in corso..." : "Invia Email"}
               </Button>
             )}
           </Form>

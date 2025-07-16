@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
@@ -34,7 +33,8 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
     voloAeroportoArrivo,
     voloDataOraPartenza,
     voloDataOraArrivo,
-    voloPrezzo,
+    costoVolo,
+    voloImmagineUrl,
   } = prenotazione;
 
   // Determina il tipo di prenotazione
@@ -57,9 +57,9 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
     : "N/A";
 
   let title = destinazione;
-  let imageUrl = null;
   let details = [];
   let linkToDetails = null;
+  let imageUrl = null;
 
   if (bookingType === "Hotel") {
     title = hotelNome || destinazione;
@@ -107,6 +107,10 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
     );
     linkToDetails = viaggioId ? `/trips/${viaggioId}` : null; // Assumendo un endpoint /trips/:id
   } else if (bookingType === "Volo") {
+    imageUrl = voloImmagineUrl?.trim()
+      ? voloImmagineUrl
+      : "https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine";
+
     title = `Volo ${voloCompagniaAerea || ""} per ${
       voloAeroportoArrivo || destinazione
     }`;
@@ -131,7 +135,7 @@ function CardPrenotazione({ prenotazione, onCancelBooking }) {
       </div>
     );
     details.push(
-      <div key="volo-prezzo">Prezzo: € {voloPrezzo?.toFixed(2) || "N/A"}</div>
+      <div key="volo-prezzo">Prezzo: € {costoVolo?.toFixed(2) || "N/A"}</div>
     );
     linkToDetails = voloId ? `/flights/${voloId}` : null; // Assumendo un endpoint /flights/:id
   }

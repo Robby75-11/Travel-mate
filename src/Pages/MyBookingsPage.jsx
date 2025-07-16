@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, Alert, Spinner, Button } from "react-bootstrap";
 import { getUserBookings, cancelBooking } from "../api.js"; // Importa le funzioni API
 import { useAuth } from "../contexts/AuthContext.jsx"; // Importa il contesto di autenticazione

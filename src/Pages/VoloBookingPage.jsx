@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Spinner, Alert, Button, Form } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx";
@@ -11,7 +11,7 @@ function VoloBookingPage() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
+  const [numeroPasseggeri, setNumeroPasseggeri] = useState(1);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -40,6 +40,11 @@ function VoloBookingPage() {
     setMessage("");
 
     try {
+      const prezzoTotale =
+        Number.isFinite(volo.costoVolo) && numeroPasseggeri
+          ? volo.costoVolo * numeroPasseggeri
+          : 0;
+
       await prenotaVolo({
         voloId: id,
         dataPrenotazione: new Date().toISOString().split("T")[0], // formato yyyy-MM-dd
@@ -47,7 +52,8 @@ function VoloBookingPage() {
         destinazione: "Prenotazione volo",
         dataInizio: new Date().toISOString().split("T")[0],
         dataFine: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-        prezzo: volo.costoVolo,
+        prezzo: volo.costoVolo * numeroPasseggeri, // ✅ calcolo corretto
+        numeroPasseggeri: parseInt(numeroPasseggeri), // ✅ invio al backend
       });
 
       setMessage("Prenotazione effettuata con successo!");
@@ -92,14 +98,35 @@ function VoloBookingPage() {
         <strong>Arrivo:</strong> {new Date(volo.dataOraArrivo).toLocaleString()}
       </p>
       <p>
-        <strong>CostoVolo:</strong> €{" "}
-        {(Number.isFinite(volo.costoVolo) ? volo.costoVolo : 0).toFixed(2)}
+        <strong>Prezzo per passeggero:</strong>{" "}
+        {Number(volo?.costoVolo) > 0
+          ? `€${Number(volo.costoVolo).toFixed(2)}`
+          : "N/A"}
+      </p>
+      <p className="mt-2">
+        <strong>Prezzo totale:</strong>{" "}
+        {Number(volo?.costoVolo) > 0
+          ? `€${(Number(volo.costoVolo) * numeroPasseggeri).toFixed(2)}`
+          : "N/A"}
       </p>
 
       {message && <Alert variant="success">{message}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="numeroPasseggeri">
+          <Form.Label>Numero Passeggeri</Form.Label>
+          <Form.Control
+            type="number"
+            value={numeroPasseggeri}
+            onChange={(e) =>
+              setNumeroPasseggeri(Math.max(1, parseInt(e.target.value) || 1))
+            }
+            min="1"
+            max="10"
+            required
+          />
+        </Form.Group>
         <Button variant="primary" type="submit" disabled={submitting}>
           {submitting ? "Prenotazione in corso..." : "Prenota ora"}
         </Button>
