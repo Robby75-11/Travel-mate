@@ -11,7 +11,7 @@ function LastMinute({ hotels = [], voli = [], viaggi = [] }) {
 
   return (
     <div className="mb-5">
-      <h3 className="mb-3">🏨 Offerte Last Minute - Hotel</h3>
+      <h3 className="mb-3">🏨 - Hotel</h3>
       <Swiper
         spaceBetween={20}
         slidesPerView={1}
@@ -28,7 +28,7 @@ function LastMinute({ hotels = [], voli = [], viaggi = [] }) {
         ))}
       </Swiper>
 
-      <h3 className="mt-5 mb-3">✈️ Offerte Last Minute - Voli</h3>
+      <h3 className="mt-5 mb-3">✈️ - Voli</h3>
       <Swiper
         spaceBetween={20}
         slidesPerView={1}
@@ -45,7 +45,7 @@ function LastMinute({ hotels = [], voli = [], viaggi = [] }) {
         ))}
       </Swiper>
 
-      <h3 className="mt-5 mb-3">🌍 Offerte Last Minute - Viaggi</h3>
+      <h3 className="mt-5 mb-3">🌍 - Viaggi</h3>
       <Swiper
         spaceBetween={20}
         slidesPerView={1}
