@@ -9,8 +9,8 @@ import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBed,
+  faBuilding,
   faPlane,
-  faCompass,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -53,7 +53,7 @@ function NavBar() {
               <FontAwesomeIcon icon={faPlane} className="me-2" /> Voli
             </Nav.Link>
             <Nav.Link as={Link} to="/trips">
-              <FontAwesomeIcon icon={faCompass} className="me-2" /> Viaggi
+              <FontAwesomeIcon icon={faBuilding} className="me-2" /> Viaggi
             </Nav.Link>
             <Nav.Link as={NavLink} to="/last-minute">
               <i className="bi bi-fire me-1 text-warning"></i> Last Minute
