@@ -16,8 +16,9 @@ function CardHotel({ hotel }) {
 
   const immagine = immaginePrincipale?.startsWith("http")
     ? immaginePrincipale
+    : immaginePrincipale
+    ? `${import.meta.env.VITE_API_URL}/${immaginePrincipale}`
     : "https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine";
-
   return (
     <Card className="h-100 shadow-sm border-0" style={{ borderRadius: "16px" }}>
       <Link to={`/hotels/${id}`}>
