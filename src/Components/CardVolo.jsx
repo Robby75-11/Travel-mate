@@ -19,7 +19,7 @@ const CardVolo = ({ volo }) => {
   } = volo;
 
   const immagine = immaginePrincipale?.trim()
-    ? immaginePrincipale
+    ? `${import.meta.env.VITE_API_URL}/${immaginePrincipale}`
     : "https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine";
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();

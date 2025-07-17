@@ -22,9 +22,8 @@ function CardViaggio({ viaggio, isBooked = false, onCancelBooking = null }) {
   };
 
   const immagine = immaginePrincipale?.trim()
-    ? immaginePrincipale
-    : "https://via.placeholder.com/600x300?text=Viaggio";
-
+    ? `${import.meta.env.VITE_API_URL}/${immaginePrincipale}`
+    : "https://placehold.co/600x400/e0e0e0/000000?text=Nessuna+Immagine";
   const prezzo = !isNaN(parseFloat(costoViaggio))
     ? parseFloat(costoViaggio).toFixed(2)
     : "N.D.";
