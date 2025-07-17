@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Container,
@@ -27,7 +27,7 @@ function ViaggioDetailPage() {
     if (!isAuthenticated) {
       navigate("/login"); // Reindirizza al login
     } else {
-      navigate(`/book-trips/${viaggio.id}`); // Vai alla pagina di prenotazione
+      navigate(`/book-trip/${viaggio.id}`); // Vai alla pagina di prenotazione
     }
   };
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -112,15 +112,12 @@ export const uploadHotelImage = async (id, files) => {
   });
 
   try {
-    const response = await axios.patch(
-      `http://localhost:8080/hotel/${id}/immagine`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-        },
-      }
-    );
+    const response = await api.patch(`/hotel/${id}/immagine`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -190,17 +187,17 @@ export const uploadMultipleViaggioImages = async (id, files) => {
     formData.append("files", file); // Deve combaciare con @RequestParam("files")
   });
 
-  const response = await axios.patch(
-    `http://localhost:8080/viaggi/${id}/immagini`,
-    formData,
-    {
+  try {
+    const response = await api.patch(`/viaggi/${id}/immagini`, formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        "Content-Type": "multipart/form-data",
       },
-    }
-  );
-
-  return response.data;
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
 };
 
 // Recupera tutti i viaggi
