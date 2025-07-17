@@ -8,7 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  fabuilding,
+  fabellconcierge,
   faPlane,
   faSuitcaseRolling,
   faHouse,
@@ -47,7 +47,7 @@ function NavBar() {
             </Nav.Link>
 
             <Nav.Link as={Link} to="/hotels">
-              <FontAwesomeIcon icon={fabuilding} className="me-2" /> Hotel
+              <FontAwesomeIcon icon={fabellconcierge} className="me-2" /> Hotel
             </Nav.Link>
             <Nav.Link as={Link} to="/flights">
               <FontAwesomeIcon icon={faPlane} className="me-2" /> Voli
