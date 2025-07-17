@@ -1,7 +1,7 @@
 import axios from "axios";
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
