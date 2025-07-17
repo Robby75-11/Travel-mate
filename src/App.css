@@ -41,3 +41,6 @@ h2 {
   box-shadow: var(--tm-shadow);
   margin-bottom: 2rem;
 }
+.navbar-custom {
+  background: linear-gradient(90deg, #0f1c27, #203943, #2c5364);
+}
