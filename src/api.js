@@ -114,7 +114,7 @@ export const uploadHotelImage = async (id, files) => {
   try {
     const response = await api.patch(`/hotel/${id}/immagine`, formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
@@ -185,14 +185,16 @@ export const uploadMultipleViaggioImages = async (id, files) => {
   files.forEach((file) => {
     formData.append("files", file); // Deve combaciare con @RequestParam("files")
   });
-
-  const response = await api.patch(`/viaggi/${id}/immagini`, formData, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await api.patch(`/viaggi/${id}/immagini`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
 };
 
 // Recupera tutti i viaggi
@@ -369,7 +371,6 @@ export const uploadVoloImage = async (id, file) => {
   try {
     const response = await api.patch(`/voli/${id}/immagine`, formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         "Content-Type": "multipart/form-data",
       },
     });
