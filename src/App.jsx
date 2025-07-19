@@ -28,66 +28,77 @@ import VoloListPage from "./Pages/VoloListPage.jsx"; // la pagina dei voli
 import VoloBookingPage from "./Pages/VoloBookingPage.jsx"; // Pagina per la prenotazione di un volo
 import RecensionePage from "./Pages/RecensionePage.jsx"; // Pagina per le recensioni dei viaggi
 import LastMinutePage from "./Pages/LastMinutePage.jsx"; // Pagina per le offerte last minute
+import { LoadScript } from "@react-google-maps/api";
 
 function App() {
   return (
-    // <AuthProvider> deve avvolgere l'intera applicazione per rendere il contesto disponibile
-    <AuthProvider>
-      {/* Questo div `min-vh-100` e `d-flex flex-column` è per spingere il footer in fondo */}
-      <div className="d-flex flex-column min-vh-100">
-        <NavBar />
+    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+      <AuthProvider>
+        {/* Questo div `min-vh-100` e `d-flex flex-column` è per spingere il footer in fondo */}
+        <div className="d-flex flex-column min-vh-100">
+          <NavBar />
 
-        {/* La sezione <main> conterrà il contenuto specifico di ogni pagina */}
-        <main className="flex-grow-1">
-          <Routes>
-            {/* Rotta della Home Page: mostrata quando l'URL è "/" */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+          {/* La sezione <main> conterrà il contenuto specifico di ogni pagina */}
+          <main className="flex-grow-1">
+            <Routes>
+              {/* Rotta della Home Page: mostrata quando l'URL è "/" */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-            {/* Rotte per le liste pubbliche di Hotel, Viaggi, ecc. */}
-            <Route path="/hotels" element={<HotelListPage />} />
-            <Route path="/trips" element={<ViaggioListPage />} />
-            <Route path="/flights" element={<VoloListPage />} />
-            {/* Rotta per i dettagli di un singolo Hotel (usato da CardHotel) */}
-            <Route path="/hotels/:id" element={<HotelDetailPage />} />
-            <Route path="/trips/:id" element={<ViaggioDetailPage />} />
-            <Route path="/flights/:id" element={<VoloDetailPage />} />
-            {/* Rotta per la prenotazione di un Hotel (usato da CardHotel) */}
-            <Route path="/book-hotel/:id" element={<HotelBookingPage />} />
-            {/* Rotta per la prenotazione di un Viaggio (usato da CardViaggio) */}
-            <Route path="/book-trip/:id" element={<ViaggioBookingPage />} />
-            {/* Rotta per la prenotazione di un Volo */}
-            <Route path="/flights/:id/prenota" element={<VoloBookingPage />} />
-            {/* Rotta per le prenotazioni dell'utente loggato */}
-            <Route path="/my-bookings" element={<MyBookingsPage />} />
-            {/* Rotta per le recensioni */}
-            <Route path="/recensioni/:tipo/:id" element={<RecensionePage />} />
-            <Route path="/last-minute" element={<LastMinutePage />} />
-            {/* Rotte del Backoffice (Accesso solitamente riservato agli Amministratori) */}
-            <Route
-              path="/admin/hotels"
-              element={<AdminHotelManagementPage />}
-            />
-            <Route path="/admin/users" element={<AdminUserManagementPage />} />
-            <Route
-              path="/admin/trips"
-              element={<AdminViaggioManagementPage />}
-            />
-            <Route
-              path="/admin/flights"
-              element={<AdminVoloManagementPage />}
-            />
-            <Route
-              path="/admin/bookings"
-              element={<AdminGestionePrenotazionePage />}
-            />
-          </Routes>
-        </main>
-        {/* Il Footer è un componente globale, appare su tutte le pagine */}
-        <Footer />
-      </div>
-    </AuthProvider>
+              {/* Rotte per le liste pubbliche di Hotel, Viaggi, ecc. */}
+              <Route path="/hotels" element={<HotelListPage />} />
+              <Route path="/trips" element={<ViaggioListPage />} />
+              <Route path="/flights" element={<VoloListPage />} />
+              {/* Rotta per i dettagli di un singolo Hotel (usato da CardHotel) */}
+              <Route path="/hotels/:id" element={<HotelDetailPage />} />
+              <Route path="/trips/:id" element={<ViaggioDetailPage />} />
+              <Route path="/flights/:id" element={<VoloDetailPage />} />
+              {/* Rotta per la prenotazione di un Hotel (usato da CardHotel) */}
+              <Route path="/book-hotel/:id" element={<HotelBookingPage />} />
+              {/* Rotta per la prenotazione di un Viaggio (usato da CardViaggio) */}
+              <Route path="/book-trip/:id" element={<ViaggioBookingPage />} />
+              {/* Rotta per la prenotazione di un Volo */}
+              <Route
+                path="/flights/:id/prenota"
+                element={<VoloBookingPage />}
+              />
+              {/* Rotta per le prenotazioni dell'utente loggato */}
+              <Route path="/my-bookings" element={<MyBookingsPage />} />
+              {/* Rotta per le recensioni */}
+              <Route
+                path="/recensioni/:tipo/:id"
+                element={<RecensionePage />}
+              />
+              <Route path="/last-minute" element={<LastMinutePage />} />
+              {/* Rotte del Backoffice (Accesso solitamente riservato agli Amministratori) */}
+              <Route
+                path="/admin/hotels"
+                element={<AdminHotelManagementPage />}
+              />
+              <Route
+                path="/admin/users"
+                element={<AdminUserManagementPage />}
+              />
+              <Route
+                path="/admin/trips"
+                element={<AdminViaggioManagementPage />}
+              />
+              <Route
+                path="/admin/flights"
+                element={<AdminVoloManagementPage />}
+              />
+              <Route
+                path="/admin/bookings"
+                element={<AdminGestionePrenotazionePage />}
+              />
+            </Routes>
+          </main>
+          {/* Il Footer è un componente globale, appare su tutte le pagine */}
+          <Footer />
+        </div>
+      </AuthProvider>
+    </LoadScript>
   );
 }
 

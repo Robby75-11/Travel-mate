@@ -10,6 +10,7 @@ import {
   Alert,
   Carousel,
 } from "react-bootstrap";
+import GoogleMappaHotel from "../Components/GoogleMappaHotel.jsx"; // Importa il componente della mappa
 import { getHotelById, uploadHotelImage } from "../api.js"; // Importa la funzione API per recuperare un singolo hotel
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +20,7 @@ function HotelDetailPage() {
   const [hotel, setHotel] = useState(null); // Stato per i dettagli dell'hotel
   const [loading, setLoading] = useState(true); // Stato per il caricamento
   const [error, setError] = useState(null); // Stato per gli errori
-
+  const [mostraMappa, setMostraMappa] = useState(false);
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -151,7 +152,29 @@ function HotelDetailPage() {
                 >
                   Leggi / Scrivi Recensioni
                 </Button>
+                <Button
+                  onClick={() => setMostraMappa(!mostraMappa)}
+                  variant="success"
+                  size="lg"
+                >
+                  {mostraMappa ? "Nascondi mappa" : "Mostra sulla mappa"}
+                </Button>
               </div>
+              {mostraMappa && (
+                <div className="mt-4">
+                  {hotel.latitudine && hotel.longitudine ? (
+                    <GoogleMappaHotel
+                      latitudine={hotel.latitudine}
+                      longitudine={hotel.longitudine}
+                      nomeHotel={hotel.nome}
+                    />
+                  ) : (
+                    <Alert variant="warning" className="text-center">
+                      Coordinate non disponibili per questo hotel.
+                    </Alert>
+                  )}
+                </div>
+              )}
             </Card.Body>
           </Card>
         </Col>
