@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Table,
-  Button,
-  Alert,
-  Spinner,
-  Modal,
-  Form,
-} from "react-bootstrap";
+import { Container, Table, Button, Alert, Modal, Form } from "react-bootstrap";
 import {
   getAllPrenotazioni,
   deletePrenotazione,

@@ -90,6 +90,10 @@ function NavBar() {
                 <NavDropdown.Item as={Link} to="/admin/bookings">
                   Gestione Prenotazioni
                 </NavDropdown.Item>
+
+                <NavDropdown.Item as={Link} to="/admin/reviews">
+                  Gestione Recensioni
+                </NavDropdown.Item>
               </NavDropdown>
             )}
             {isAuthenticated && (

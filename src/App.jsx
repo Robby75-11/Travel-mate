@@ -15,6 +15,7 @@ import AdminHotelManagementPage from "./Pages/admin/AdminHotelManagementPage.jsx
 import AdminUserManagementPage from "./Pages/admin/AdminUserManagementPage.jsx";
 import AdminVoloManagementPage from "./Pages/admin/AdminVoloManagementPage.jsx"; // Pagina per la gestione dei voli
 import AdminGestionePrenotazionePage from "./Pages/admin/AdminGestionePrenotazionePage.jsx"; // Pagina per la gestione prenotazioni
+import AdminGestioneRecensioniPage from "./Pages/admin/AdminGestioneRecensioniPage.jsx"; // Pagina per la gestione delle recensioni
 // Nuove pagine da aggiungere per i dettagli/List/prenotazione di hotel/Viaggio/volo
 import HotelDetailPage from "./Pages/HotelDetailPage.jsx"; // Pagina per i dettagli di un singolo hotel
 import HotelBookingPage from "./Pages/HotelBookingPage.jsx"; // Pagina per la prenotazione di un hotel
@@ -91,6 +92,10 @@ function App() {
               <Route
                 path="/admin/bookings"
                 element={<AdminGestionePrenotazionePage />}
+              />
+              <Route
+                path="/admin/reviews"
+                element={<AdminGestioneRecensioniPage />}
               />
             </Routes>
           </main>
