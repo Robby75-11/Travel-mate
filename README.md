@@ -22,7 +22,7 @@ Il progetto è suddiviso in due repository:
 - **Frontend**: `Travel-mate`
 - **Backend**: `Travel-mate-backend`
 
-Alla consegna andranno **zippati entrambi i repository**.
+Alla consegna andranno
 
 ---
 
