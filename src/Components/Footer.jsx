@@ -79,7 +79,7 @@ function Footer() {
           {/* Colonna 4: Seguici */}
           <Col md={3} sm={6} className="mb-4 mb-md-0">
             <h5>Seguici</h5>
-            <div className="social-icons">
+            <div className="social-icons mb-3">
               <a
                 href="https://facebook.com/travelmate"
                 target="_blank"
@@ -109,8 +109,33 @@ function Footer() {
                 <FaLinkedin />
               </a>
             </div>
-            {/* Puoi aggiungere qui altri contatti o una breve descrizione */}
             <p className="mt-3">Il tuo partner ideale per ogni avventura.</p>
+
+            {/* Badge App Store e Google Play */}
+            <div className="d-flex flex-wrap gap-2 mt-3">
+              <a
+                href="https://apps.apple.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                  alt="Scarica su App Store"
+                  height="40"
+                />
+              </a>
+              <a
+                href="https://play.google.com/store"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                  alt="Disponibile su Google Play"
+                  height="40"
+                />
+              </a>
+            </div>
           </Col>
         </Row>
 

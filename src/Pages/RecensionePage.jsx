@@ -40,6 +40,8 @@ const RecensionePage = () => {
         [tipo]: { id: parseInt(id) }, // es. { hotel: { id: 1 } }
       };
 
+      console.log("🟨 Invio recensione:", { tipo, body: reviewBody });
+
       await createRecensione(tipo, reviewBody);
 
       setContenuto("");

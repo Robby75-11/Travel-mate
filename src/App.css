@@ -31,6 +31,7 @@ h2 {
 .search-bar button {
   border-radius: 0.375rem;
 }
+
 .navbar {
   background-color: #2c5364;
   color: #fff;
@@ -38,6 +39,28 @@ h2 {
 .navbar-custom {
   background: linear-gradient(90deg, #0f1c27, #203943, #2c5364);
 }
+
+.search-bar-container {
+  background-color: #f8f9fa; /* colore chiaro */
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.search-bar-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar-container label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.search-bar-container input,
+.search-bar-container select {
+  border-radius: 10px;
+}
+
 
 /* Search bar elegante */
 .search-bar {

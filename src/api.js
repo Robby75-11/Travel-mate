@@ -1,7 +1,8 @@
 import axios from "axios";
 // verranno automaticamente reindirizzate a http://localhost:8080.
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080",
+
   headers: {
     "Content-Type": "application/json",
   },
@@ -190,7 +191,6 @@ export const uploadMultipleViaggioImages = async (id, files) => {
   try {
     const response = await api.patch(`/viaggi/${id}/immagini`, formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -374,7 +374,6 @@ export const uploadVoloImage = async (id, file) => {
   try {
     const response = await api.patch(`/voli/${id}/immagine`, formData, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
         "Content-Type": "multipart/form-data",
       },
     });
@@ -425,12 +424,34 @@ export const getRecensioniByTipoAndId = async (tipo, id) => {
   }
 };
 
+// Recupera tutte le recensioni (solo admin)
+export const getAllRecensioni = async () => {
+  try {
+    const response = await api.get("/recensioni/all");
+    return response.data;
+  } catch (error) {
+    console.error("Errore nel recupero di tutte le recensioni:", error);
+    throw error; // rilancia l'errore per permettere una gestione a livello superiore
+  }
+};
+
 // Invia una nuova recensione (hotel o viaggio)
 export const createRecensione = async (tipo, recensioneData) => {
   try {
     const response = await api.post(`/recensioni/${tipo}`, recensioneData);
     return response.data;
   } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Elimina una recensione (solo admin)
+export const deleteRecensione = async (id) => {
+  try {
+    const response = await api.delete(`/recensioni/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Errore nell'eliminazione della recensione:", error);
     throw error.response?.data || error.message;
   }
 };
