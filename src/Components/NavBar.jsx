@@ -46,7 +46,7 @@ function NavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="mx-auto d-flex align-items-center gap-4">
             <Nav.Link as={Link} to="/">
               <FontAwesomeIcon icon={faHouse} className="me-2 text-light" />{" "}
               Home
@@ -96,14 +96,14 @@ function NavBar() {
                 </NavDropdown.Item>
               </NavDropdown>
             )}
+          </Nav>
+          <Nav className="align-items-center">
             {isAuthenticated && (
-              <Nav.Link as={Link} to="/my-bookings">
+              <Nav.Link as={Link} to="/my-bookings" className="me-3">
                 Le Mie Prenotazioni
               </Nav.Link>
             )}
-          </Nav>
 
-          <Nav>
             {!isAuthenticated ? (
               <>
                 <Nav.Link as={Link} to="/login">
