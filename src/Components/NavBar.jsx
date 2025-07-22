@@ -73,7 +73,11 @@ function NavBar() {
               <i className="bi bi-fire me-1 text-warning"></i> Last Minute
             </Nav.Link>
             {isAuthenticated && userRole === "AMMINISTRATORE" && (
-              <NavDropdown title="Backoffice" id="backoffice-nav-dropdown">
+              <NavDropdown
+                title="Backoffice"
+                id="backoffice-nav-dropdown"
+                className="ms-4 me-4"
+              >
                 <NavDropdown.Item as={Link} to="/admin/hotels">
                   Gestione Hotel
                 </NavDropdown.Item>
