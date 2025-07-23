@@ -30,7 +30,7 @@ const CardVolo = ({ volo }) => {
     if (!isAuthenticated) {
       navigate("/login"); // Reindirizza al login
     } else {
-      navigate(`/flights/${id}/prenota`); // Vai alla pagina di prenotazione
+      navigate(`/flights/${id}/prenota`); // Va alla pagina di prenotazione
     }
   };
 

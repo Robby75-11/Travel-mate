@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext.jsx";
 import { getRecensioniByTipoAndId, createRecensione } from "../api";
 
 const RecensionePage = () => {
-  const { currentUser } = useAuth(); // Ottieni l'utente corrente dal contesto di autenticazione
+  const { currentUser } = useAuth(); // utente corrente dal contesto di autenticazione
   const { tipo, id } = useParams();
   const [recensioni, setRecensioni] = useState([]);
   const [contenuto, setContenuto] = useState("");
