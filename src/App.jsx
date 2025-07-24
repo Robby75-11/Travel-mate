@@ -32,7 +32,6 @@ import LastMinutePage from "./Pages/LastMinutePage.jsx"; // Pagina per le offert
 import { LoadScript } from "@react-google-maps/api";
 
 function App() {
-  console.log("🔗 VITE_API_URL:", import.meta.env.VITE_API_URL);
   return (
     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <AuthProvider>
