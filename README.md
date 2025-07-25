@@ -52,6 +52,7 @@ Cloudinary API
 
 Java Mail Sender (Gmail)
 
+Google Maps Api Key
 Google Maps Geocoding
 
 🧪 Testing
