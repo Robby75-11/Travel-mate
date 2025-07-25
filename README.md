@@ -1,57 +1,89 @@
-# ✈️ Travel Mate
+✈️ Travel Mate — Il tuo compagno di viaggio ideale 🌍🧳
+Travel Mate è un'applicazione full-stack per la prenotazione di hotel, viaggi, crociere e voli, progettata per offrire un'esperienza semplice, elegante e sicura.
+Con un pannello admin back-office, gestione delle recensioni, autenticazione JWT e notifiche via email, Travel Mate è pensata per tutti: viaggiatori e amministratori!
 
-**Travel Mate** è un'applicazione full-stack per la prenotazione di **hotel, viaggi, crociere e voli**, con gestione completa da pannello **admin back-office**. Include autenticazione JWT, sistema di recensioni, gestione utenti che loggati possono fare prenotazioni,scrivere recensioni e verificare le proprie prenotazioni. L'amministratore
-puo caricare con Cloudinary più immagini , modificare hotel/viaggi/voli, cancellare prenotazioni, recensioni e invio email di conferma prenotazione quando aggiorna lo stato da IN ATTESA A CONFERMATA.
+💫 Cosa puoi fare con Travel Mate
+👤 Utente registrato può:
 
-🌐 **Versione online**: https://travel-mate-sand.vercel.app
-Backend: https://travel-mate-backend-production-b35c.up.railway.app
+Prenotare hotel, viaggi e voli
 
-File vercel.json: Serve per le Single Page Application (SPA) dove il routing è gestito dal frontend. Senza questo rewrite:
+Scrivere e leggere recensioni
 
-Se c'è /viaggi/123 direttamente nel browser (es. ricarico la pagina), Vercel cerca un file /viaggi/123.html e restituisce 404.
+Vedere lo storico delle proprie prenotazioni
 
-Con il rewrite:
+🛠️ Amministratore può:
 
-Tutte le richieste vengono reindirizzate a / → l'app React/Vite può leggere la route ed eseguire il render corretto tramite react-router-dom.
+Gestire hotel, viaggi e voli
 
----Interfaccia responsive.
+Caricare più immagini via Cloudinary
 
-## 🧑‍💻 Tecnologie utilizzate
+Modificare e cancellare prenotazioni/recensioni
 
-- **Frontend**: React, Vite, Bootstrap, Axios
-- **Backend**: Spring Boot, PostgreSQL, Spring Security
-- **Test**: JUnit (backend)
-  Testato con Postman tutti gli end-point.
+Inviare automaticamente un’email di conferma quando una prenotazione viene aggiornata da "IN ATTESA" a "CONFERMATA"
 
----
+🌐 Versione online
+🔗 Frontend: https://travel-mate-sand.vercel.app
 
-## 📦 Struttura del progetto
+🔗 Backend: https://travel-mate-backend-production-b35c.up.railway.app
 
-Il progetto è suddiviso in due repository:
+🛠️ vercel.json incluso per supportare il routing client-side SPA (React Router).
+Esempio: accedendo direttamente a /viaggi/123 il routing viene gestito correttamente senza 404.
 
-- **Frontend**: `Travel-mate`
-- **Backend**: `Travel-mate-backend`
+🧪 Tecnologie utilizzate
+🖥️ Frontend
+React
 
-Alla consegna ci saranno 2 repository una per il front end che caricherò nel form della consegna su pagina epicode,
+Vite
 
-e l'altra back-end il cui link sarà in questo file README.md.
+Bootstrap 5
 
-Repository Back-end :https://github.com/Robby75-11/Travel-mate-backend
+Axios
 
+React Router DOM
+
+🔧 Backend
+Spring Boot
+
+PostgreSQL
+
+Spring Security + JWT
+
+Cloudinary API
+
+Java Mail Sender (Gmail)
+
+Google Maps Geocoding
+
+🧪 Testing
+JUnit (backend)
+
+Postman per test endpoint
+
+📁 Struttura del progetto
+🔗 Frontend Repository: [Travel-mate](https://github.com/Robby75-11/Travel-mate) (verrà caricato su piattaforma Epicode)
+🔗 Backend Repository: [Travel-mate-backend](https://github.com/Robby75-11/Travel-mate-backend)
+
+▶️ Avvio del progetto in locale
+📦 Frontend (React + Vite)
+bash
+Copia
+Modifica
 cd Travel-mate
-
-## ▶️ Avvio del progetto
-
-### 📁 Frontend (Travel-mate)
-
-# Installa le dipendenze
-
 npm install
-
-# Avvia il server di sviluppo
-
 npm run dev
 
-Backend : avvio il server di Intellij
+🧠 Backend (Spring Boot)
+Apri il progetto in IntelliJ
 
-Progetto "Capstone 2025" Di Roberto Albergo
+Avvia il file TravelMateApplication.java
+
+Il backend sarà disponibile su http://localhost:8080
+
+📸 Screenshot e GIF (opzionali)
+immagini delle principali sezioni: homepage, booking, admin panel, ecc.
+![alt text](image.png)![alt text](<Screenshot 2025-07-25 163403.png>)![alt text](<Screenshot 2025-07-25 171307.png>)
+
+🏁 Progetto finale Epicode 2025 — Roberto Albergo
+Questo progetto è il risultato del mio percorso formativo full-stack su Epicode:
+🔹 Con passione ho integrato backend, frontend e API reali per offrire un’esperienza completa e fluida.
+🔹 Travel Mate non è solo un’app: è la mia visione di un modo più semplice e bello di viaggiare.
