@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Form, Button, Card, Alert } from "react-bootstrap"; // Importa i componenti Bootstrap
 import { useNavigate } from "react-router-dom"; // Per reindirizzare l'utente dopo il login
 import { useAuth } from "../contexts/AuthContext.jsx"; // Importa il tuo contesto di autenticazione
@@ -95,6 +95,14 @@ function LoginPage() {
               Accedi
             </Button>
           </Form>
+
+          {/* Link a "password dimenticata" */}
+          <p className="text-center mt-2">
+            <Button variant="link" onClick={() => navigate("/forgot-password")}>
+              Password dimenticata?
+            </Button>
+          </p>
+
           <p className="text-center mt-3">
             Non hai un account?{" "}
             <Button variant="link" onClick={() => navigate("/register")}>

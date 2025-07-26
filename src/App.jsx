@@ -9,6 +9,9 @@ import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/HomePage.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import RegisterPage from "./Pages/RegisterPage.jsx";
+import ResetPassword from "./Pages/ResetPassword.jsx";
+import ForgotPassword from "./Pages/ForgotPassword.jsx";
+
 // Pagine del Backoffice (per l'Admin)
 import AdminViaggioManagementPage from "./Pages/admin/AdminViaggioManagementPage.jsx";
 import AdminHotelManagementPage from "./Pages/admin/AdminHotelManagementPage.jsx";
@@ -46,7 +49,8 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               {/* Rotte per le liste pubbliche di Hotel, Viaggi, ecc. */}
               <Route path="/hotels" element={<HotelListPage />} />
               <Route path="/trips" element={<ViaggioListPage />} />

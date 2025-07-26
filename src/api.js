@@ -53,6 +53,31 @@ export const logout = () => {
   localStorage.removeItem("jwtToken");
 };
 
+// --- 9. Metodi per Recupero Password (Endpoint: /auth) ---
+
+// Richiesta reset password: invia email con link
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Reset effettivo della password (con token)
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await api.post("/auth/reset-password", {
+      token,
+      newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 // --- 2. Metodi per Hotel (Endpoint: /hotel) ---
 
 // Recupera tutti gli hotel
