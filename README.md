@@ -1,6 +1,6 @@
 ✈️ Travel Mate — Il tuo compagno di viaggio ideale 🌍🧳
 Travel Mate è un'applicazione full-stack per la prenotazione di hotel, viaggi, crociere e voli, progettata per offrire un'esperienza semplice, elegante e sicura.
-Con un pannello admin back-office, gestione delle recensioni, autenticazione JWT e notifiche via email, Travel Mate è pensata per tutti: viaggiatori e amministratori!
+Con un pannello admin back-office, gestione delle recensioni,prenotazioni,utenti, autenticazione JWT e notifiche via email, Travel Mate è pensata per tutti: viaggiatori e amministratori!
 
 💫 Cosa puoi fare con Travel Mate
 👤 Utente registrato può:
