@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
             const roles = decoded.roles || decoded.role;
             if (Array.isArray(roles) && roles.length > 0) {
-              setUserRole(roles[0].replace("ROLE_", "")); // Rimuovi il prefisso 'ROLE_'
+              setUserRole(roles[0].replace("ROLE_", ""));
             } else if (typeof roles === "string") {
               setUserRole(roles.replace("ROLE_", ""));
             } else {
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Errore nel login:", error);
       setIsAuthenticated(false);
       setUserRole(null);
-      localStorage.removeItem("jwtToken"); // Assicurati che il token sia rimosso in caso di errore di login
+      localStorage.removeItem("jwtToken"); // Assicura che il token sia rimosso in caso di errore di login
       throw error; // Rilancia l'errore per gestirlo nel componente di login
     }
   };
