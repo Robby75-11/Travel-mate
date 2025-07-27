@@ -63,7 +63,7 @@ function RegisterPage() {
       }, 2000); // 2 secondi di attesa
     } catch (error) {
       console.error("Errore durante la registrazione:", error);
-      // Gestisci l'errore dalla risposta del backend
+      // Gestisce l'errore dalla risposta del backend
       // Cerca un messaggio specifico nell'errore della risposta (es. error.response.data.message)
       const errorMessage =
         error.response?.data?.message || "Errore di registrazione. Riprova.";

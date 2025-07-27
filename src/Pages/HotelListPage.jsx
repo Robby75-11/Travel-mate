@@ -12,7 +12,7 @@ function HotelListPage() {
     const fetchHotels = async () => {
       try {
         const data = await getAllHotels(); // Chiama l'API per ottenere tutti gli hotel
-        // CORREZIONE: Assicurati che 'data' sia un array. Se non lo è, usa un array vuoto.
+        // CORREZIONE: Assicura che 'data' sia un array. Se non lo è, usa un array vuoto.
         setHotels(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Errore nel recuperare gli hotel:", err);
@@ -23,7 +23,7 @@ function HotelListPage() {
       }
     };
 
-    fetchHotels(); // Esegui la funzione di recupero dati al mount del componente
+    fetchHotels(); // Esegue la funzione di recupero dati al mount del componente
   }, []); // L'array vuoto assicura che l'effetto si esegua solo una volta al mount
 
   // Gestione dello stato di caricamento

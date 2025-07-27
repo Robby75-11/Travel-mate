@@ -5,8 +5,8 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { jwtDecode } from "jwt-decode"; // Assicurati di aver installato: npm install jwt-decode
-import { loginUser, logout } from "../api.js"; // I tuoi metodi API definiti in src/api.js
+import { jwtDecode } from "jwt-decode";
+import { loginUser, logout } from "../api.js"; // Metodi API definiti in src/api.js
 
 // Crea il contesto di autenticazione
 const AuthContext = createContext(null);
