@@ -51,7 +51,7 @@ function VoloBookingPage() {
         statoPrenotazione: "IN_ATTESA",
         destinazione: "Prenotazione volo",
         dataInizio: new Date().toISOString().split("T")[0],
-        dataFine: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+        dataFine: new Date(volo.dataOraArrivo).toISOString().split("T")[0],
         prezzo: volo.costoVolo * numeroPasseggeri, // ✅ calcolo corretto
         numeroPasseggeri: parseInt(numeroPasseggeri), // ✅ invio al backend
       });
