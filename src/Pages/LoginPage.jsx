@@ -45,7 +45,6 @@ function LoginPage() {
       }, 1500); // 1.5 secondi di attesa
     } catch (error) {
       console.error("Errore durante il login:", error);
-      // Gestisci l'errore dalla risposta del backend
       // Cerca un messaggio specifico nell'errore della risposta (es. error.response.data.message)
       const errorMessage =
         error.response?.data?.message || "Credenziali non valide. Riprova.";
