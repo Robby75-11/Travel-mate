@@ -82,21 +82,8 @@ function ViaggioBookingPage() {
     setIsError(false);
     setSubmitting(true);
 
-    // Validazione lato client
-    if (
-      !bookingData.dataInizio ||
-      !bookingData.dataFine ||
-      bookingData.numPasseggeri < 1
-    ) {
-      setMessage("Per favore, compila tutti i campi obbligatori.");
-      setIsError(true);
-      setSubmitting(false);
-      return;
-    }
-    if (new Date(bookingData.dataInizio) > new Date(bookingData.dataFine)) {
-      setMessage(
-        "La data di inizio non può essere successiva alla data di fine."
-      );
+    if (bookingData.numPasseggeri < 1) {
+      setMessage("Il numero di passeggeri deve essere almeno 1.");
       setIsError(true);
       setSubmitting(false);
       return;
@@ -214,8 +201,7 @@ function ViaggioBookingPage() {
                 type="date"
                 name="dataInizio"
                 value={bookingData.dataInizio}
-                onChange={handleChange}
-                required
+                readOnly
               />
             </Form.Group>
 
@@ -225,8 +211,7 @@ function ViaggioBookingPage() {
                 type="date"
                 name="dataFine"
                 value={bookingData.dataFine}
-                onChange={handleChange}
-                required
+                readOnly
               />
             </Form.Group>
 
