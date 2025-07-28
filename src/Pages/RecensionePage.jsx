@@ -33,7 +33,6 @@ const RecensionePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const postEndpoint = `/recensioni/${tipo}`;
       const reviewBody = {
         contenuto,
         valutazione,
@@ -133,6 +132,10 @@ const RecensionePage = () => {
                   <Card.Text>{rec.contenuto}</Card.Text>
                   <small className="text-muted">
                     Inviata il {rec.dataCreazione}
+                  </small>
+                  <br />
+                  <small className="text-muted">
+                    Destinazione: {rec.destinazioneNome || "N/D"}
                   </small>
                 </Card.Body>
               </Card>
