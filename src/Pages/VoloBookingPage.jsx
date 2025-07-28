@@ -13,7 +13,7 @@ function VoloBookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [numeroPasseggeri, setNumeroPasseggeri] = useState(1);
   const { user, isAuthenticated } = useAuth();
-
+  const [datiPrenotazione, setDatiPrenotazione] = useState(null);
   useEffect(() => {
     const fetchVolo = async () => {
       try {
@@ -57,6 +57,12 @@ function VoloBookingPage() {
       });
 
       setMessage("Prenotazione effettuata con successo!");
+      setDatiPrenotazione({
+        dataPrenotazione: new Date().toISOString().split("T")[0],
+        dataInizio: new Date(volo.dataOraPartenza).toISOString().split("T")[0],
+        dataFine: new Date(volo.dataOraArrivo).toISOString().split("T")[0],
+        numeroPasseggeri,
+      });
     } catch (err) {
       setError("Errore durante la prenotazione. Riprova.");
     } finally {
