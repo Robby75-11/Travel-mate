@@ -8,6 +8,14 @@ import CardVolo from "../Components/CardVolo";
 import SearchBar from "../Components/SearchBar";
 import { useState, useEffect } from "react";
 
+//  Funzione per normalizzare stringhe
+const normalize = (str) =>
+  str
+    ?.toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 function HomePage() {
   const { isAuthenticated } = useAuth();
   const [hotels, setHotels] = useState([]);
@@ -40,37 +48,40 @@ function HomePage() {
 
   // Filtri dinamici per hotel
   const filteredHotels = hotels.filter((h) => {
-    const matchCity = h.citta
-      ?.toLowerCase()
-      .includes(filters.destinazione.toLowerCase());
-
-    return matchCity;
+    const city = normalize(h.citta || "");
+    const search = normalize(filters.destinazione || "");
+    return city.includes(search);
   });
 
   // Filtri dinamici per viaggi
   const filteredViaggi = viaggi.filter((v) => {
-    const matchDest = v.destinazione
-      ?.toLowerCase()
-      .includes(filters.destinazione.toLowerCase());
-    const matchData = filters.data
-      ? v.dataPartenza?.startsWith(filters.data)
-      : true;
-    return matchDest && matchData;
-  });
+    const matchDestOrTitle = [v.destinazione, v.titolo].some((field) =>
+      (field || "").toLowerCase().includes(filters.destinazione.toLowerCase())
+    );
 
+    const matchData = filters.data
+      ? v.dataPartenza?.toString().startsWith(filters.data)
+      : true;
+
+    return matchDestOrTitle && matchData;
+  });
   // Filtri dinamici per voli
   const filteredVoli = voli.filter((v) => {
-    const matchPartenza = v.partenza
-      ?.toLowerCase()
-      .includes(filters.partenza.toLowerCase());
-    const matchDest = v.destinazione
-      ?.toLowerCase()
-      .includes(filters.destinazione.toLowerCase());
+    const partenza = normalize(v.aeroportoPartenza || "");
+    const arrivo = normalize(v.aeroportoArrivo || "");
+    const partenzaFilter = normalize(filters.partenza || "");
+    const arrivoFilter = normalize(filters.destinazione || "");
     const matchData = filters.data
-      ? v.dataPartenza?.startsWith(filters.data)
+      ? (v.dataOraPartenza || "").startsWith(filters.data)
       : true;
-    return matchPartenza && matchDest && matchData;
+
+    return (
+      partenza.includes(partenzaFilter) &&
+      arrivo.includes(arrivoFilter) &&
+      matchData
+    );
   });
+
   return (
     <Container className="mt-4">
       {/* Sezione Hero / Introduttiva */}
