@@ -32,7 +32,6 @@ function AdminUserManagementPage() {
     setError(null);
     try {
       const data = await getAllUsers();
-      console.log("Risposta getAllUsers:", data);
       setUsers(data);
     } catch (err) {
       console.error("Errore nel recuperare gli utenti:", err);
