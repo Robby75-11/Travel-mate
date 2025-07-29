@@ -46,8 +46,7 @@ function AdminGestionePrenotazionePage() {
     setCurrent(p);
     setFormData({
       statoPrenotazione: p.statoPrenotazione,
-      messaggioEmail:
-        "Gentile cliente, la tua prenotazione è stata confermata.",
+      messaggioEmail: "Gentile utente, la tua prenotazione è stata confermata.",
     });
     setShowModal(true);
   };
