@@ -422,10 +422,10 @@ export const updatePrenotazione = async (id, data) => {
   return response.data;
 };
 
-export const inviaEmailConferma = async (emailRequestDto) => {
-  const response = await api.post("/email/invia", emailRequestDto);
-  return response.data;
-};
+//export const inviaEmailConferma = async (emailRequestDto) => {
+// const response = await api.post("/email/invia", emailRequestDto);
+// return response.data;
+//};
 
 // Elimina una prenotazione tramite ID (richiede autenticazione)
 export const deletePrenotazione = async (id) => {

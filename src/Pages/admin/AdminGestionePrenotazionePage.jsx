@@ -4,7 +4,6 @@ import {
   getAllPrenotazioni,
   deletePrenotazione,
   updatePrenotazione,
-  inviaEmailConferma,
 } from "../../api";
 
 function AdminGestionePrenotazionePage() {
@@ -15,11 +14,9 @@ function AdminGestionePrenotazionePage() {
   const [current, setCurrent] = useState(null);
   const [formData, setFormData] = useState({
     statoPrenotazione: "",
-    messaggioEmail: "",
   });
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
-  const [emailSending, setEmailSending] = useState(false);
 
   const fetchPrenotazioni = async () => {
     try {
@@ -46,7 +43,6 @@ function AdminGestionePrenotazionePage() {
     setCurrent(p);
     setFormData({
       statoPrenotazione: p.statoPrenotazione,
-      messaggioEmail: "Gentile utente, la tua prenotazione è stata confermata.",
     });
     setShowModal(true);
   };
@@ -63,52 +59,21 @@ function AdminGestionePrenotazionePage() {
         ...current,
         statoPrenotazione: formData.statoPrenotazione,
       });
-      setMessage("Aggiornamento riuscito");
+      if (formData.statoPrenotazione === "CONFERMATA") {
+        setMessage("✅ Prenotazione confermata ed email inviata con successo!");
+      } else {
+        setMessage("✅ Prenotazione aggiornata con successo!");
+      }
+
       fetchPrenotazioni();
-      setTimeout(() => setShowModal(false), 1000);
+      setTimeout(() => {
+        setShowModal(false);
+        setMessage("");
+      }, 2000);
     } catch (err) {
-      setMessage("Errore aggiornamento");
+      setMessage("❌ Errore durante l'aggiornamento della prenotazione");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleEmail = async (id, showInModal = true) => {
-    setEmailSending(true);
-
-    if (showInModal) {
-      setMessage("📨 Invio email in corso...");
-    } else {
-      setMessage("📨 Invio email in corso...");
-    }
-
-    try {
-      await inviaEmailConferma({
-        idPrenotazione: id,
-        testo: formData.messaggioEmail,
-        oggetto: "Conferma Prenotazione",
-      });
-
-      if (showInModal) {
-        setMessage("✅ Email inviata con successo!");
-        setTimeout(() => {
-          setShowModal(false);
-          setMessage("");
-          setCurrent(null);
-        }, 2000);
-      } else {
-        setMessage("✅ Email inviata con successo!");
-        // Mostra messaggio temporaneo in alto
-        setTimeout(() => {
-          setMessage("");
-        }, 3000);
-      }
-    } catch (error) {
-      const errorMsg = "❌ Errore nell'invio dell'email";
-      setMessage(errorMsg);
-      setTimeout(() => setMessage(""), 3000);
-    } finally {
-      setEmailSending(false);
     }
   };
 
@@ -146,7 +111,6 @@ function AdminGestionePrenotazionePage() {
             <tr key={p.id}>
               <td>{p.id}</td>
               <td>{p.utente ? `${p.utente.nome} ${p.utente.cognome}` : "-"}</td>
-
               <td>{p.utente ? p.utente.email : "-"}</td>
               <td>{p.destinazione || "-"}</td>
               <td>
@@ -175,17 +139,7 @@ function AdminGestionePrenotazionePage() {
                   onClick={() => handleDelete(p.id)}
                 >
                   Elimina
-                </Button>{" "}
-                {p.statoPrenotazione === "CONFERMATA" && (
-                  <Button
-                    size="sm"
-                    variant="success"
-                    onClick={() => handleEmail(p.id, false)}
-                    disabled={emailSending}
-                  >
-                    Invia Email
-                  </Button>
-                )}
+                </Button>
               </td>
             </tr>
           ))}
@@ -229,33 +183,9 @@ function AdminGestionePrenotazionePage() {
               </Form.Select>
             </Form.Group>
 
-            {formData.statoPrenotazione === "CONFERMATA" && (
-              <Form.Group className="mt-3">
-                <Form.Label>Messaggio Email</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="messaggioEmail"
-                  value={formData.messaggioEmail}
-                  onChange={handleFormChange}
-                />
-              </Form.Group>
-            )}
-
             <Button type="submit" className="mt-3" disabled={saving}>
               {saving ? "Salvataggio..." : "Salva"}
             </Button>
-            {formData.statoPrenotazione === "CONFERMATA" && (
-              <Button
-                type="button"
-                variant="success"
-                className="mt-3 ms-2"
-                onClick={() => handleEmail(current.id)}
-                disabled={emailSending}
-              >
-                {emailSending ? "Invio in corso..." : "Invia Email"}
-              </Button>
-            )}
           </Form>
         </Modal.Body>
       </Modal>
