@@ -75,6 +75,7 @@ function LoginPage() {
                 value={credentials.email}
                 onChange={handleChange}
                 required
+                autoComplete="username"
               />
             </Form.Group>
 
@@ -87,6 +88,7 @@ function LoginPage() {
                 value={credentials.password}
                 onChange={handleChange}
                 required
+                autoComplete="current-password"
               />
             </Form.Group>
 
