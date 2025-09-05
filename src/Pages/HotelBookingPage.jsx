@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Alert, Spinner } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext.jsx"; // per verificare se l'utente è autenticato
 import { getHotelById, createHotelBooking } from "../api.js"; // Importa la funzione API per ottenere gli hotel disponibili
