@@ -9,6 +9,7 @@ function RegisterPage() {
     nome: "", // Modificato da 'username' a 'nome'
     cognome: "", // Aggiunto campo 'cognome'
     email: "",
+    telefono: "", // Aggiunto campo 'telefono' se necessario
     password: "",
     confirmPassword: "",
   });
@@ -42,11 +43,12 @@ function RegisterPage() {
 
     try {
       // Prepara i dati da inviare al backend.
-      // Ora inviamo 'nome', 'cognome', 'email', 'password'
+      // Ora inviamo 'nome', 'cognome', 'email', 'telefono', 'password'
       const userData = {
         nome: formData.nome, // Corrisponde al campo nel backend
         cognome: formData.cognome, // Corrisponde al campo nel backend
         email: formData.email,
+        telefono: formData.telefono, // Corrisponde al campo nel backend
         password: formData.password,
       };
 
@@ -54,7 +56,7 @@ function RegisterPage() {
       await registerUser(userData);
 
       setMessage(
-        "Registrazione avvenuta con successo! Reindirizzamento al login..."
+        "Registrazione avvenuta con successo! Reindirizzamento al login...",
       );
       setIsError(false);
       // Reindirizza l'utente alla pagina di login dopo un breve ritardo
@@ -118,6 +120,18 @@ function RegisterPage() {
                 placeholder="Inserisci email"
                 name="email" // Il nome deve corrispondere alla chiave in formData
                 value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicTelefono">
+              <Form.Label>Telefono</Form.Label>
+              <Form.Control
+                type="telefono"
+                placeholder="Inserisci telefono"
+                name="telefono" // Il nome deve corrispondere alla chiave in formData
+                value={formData.telefono}
                 onChange={handleChange}
                 required
               />

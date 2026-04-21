@@ -36,7 +36,7 @@ function AdminUserManagementPage() {
     } catch (err) {
       console.error("Errore nel recuperare gli utenti:", err);
       setError(
-        "Impossibile caricare gli utenti. Accesso negato o errore di rete."
+        "Impossibile caricare gli utenti. Accesso negato o errore di rete.",
       );
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ function AdminUserManagementPage() {
   useEffect(() => {
     if (!isAuthenticated || userRole !== "AMMINISTRATORE") {
       setError(
-        "Accesso negato. Solo gli amministratori possono accedere a questa pagina."
+        "Accesso negato. Solo gli amministratori possono accedere a questa pagina.",
       );
       setLoading(false);
       setTimeout(() => navigate("/login"), 2000); // Reindirizza al login
@@ -101,7 +101,7 @@ function AdminUserManagementPage() {
   const handleDeleteUser = async (id) => {
     if (
       !window.confirm(
-        "Sei sicuro di voler eliminare questo utente? Questa azione è irreversibile."
+        "Sei sicuro di voler eliminare questo utente? Questa azione è irreversibile.",
       )
     ) {
       return;
@@ -154,6 +154,7 @@ function AdminUserManagementPage() {
               <th>Nome</th>
               <th>Cognome</th>
               <th>Email</th>
+              <th>Telefono</th>
               <th>Ruolo</th>
               <th>Azioni</th>
             </tr>
@@ -165,6 +166,7 @@ function AdminUserManagementPage() {
                 <td>{user.nome}</td>
                 <td>{user.cognome}</td>
                 <td>{user.email}</td>
+                <td>{user.telefono}</td>
                 <td>{user.ruolo}</td>
 
                 <td>
