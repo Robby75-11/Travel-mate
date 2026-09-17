@@ -33,6 +33,8 @@ function AdminHotelManagementPage() {
     citta: "",
     descrizione: "",
     prezzoNotte: "",
+    latitudine: "",
+    longitudine: "",
   });
   const [imageFileOnForm, setImageFileOnForm] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -79,6 +81,8 @@ function AdminHotelManagementPage() {
       citta: hotel?.citta || "",
       descrizione: hotel?.descrizione || "",
       prezzoNotte: hotel?.prezzoNotte || "",
+      latitudine: hotel?.latitudine || "",
+      longitudine: hotel?.longitudine || "",
     });
     setImageFileOnForm(null);
     setFormMessage("");
@@ -124,6 +128,8 @@ function AdminHotelManagementPage() {
         citta: formData.citta,
         descrizione: formData.descrizione,
         prezzoNotte: parseFloat(formData.prezzoNotte),
+        latitudine: parseFloat(formData.latitudine),
+        longitudine: parseFloat(formData.longitudine),
       };
       if (currentHotel) {
         result = await updateHotel(currentHotel.id, payload);
@@ -208,6 +214,8 @@ function AdminHotelManagementPage() {
             <th>Indirizzo</th>
             <th>Città</th>
             <th>Prezzo</th>
+            <th>Latitudine</th>
+            <th>Longitudine</th>
             <th>Immagine</th>
             <th>Azioni</th>
           </tr>
@@ -221,6 +229,8 @@ function AdminHotelManagementPage() {
               <td>{h.indirizzo}</td>
               <td>{h.citta}</td>
               <td>€{h.prezzoNotte.toFixed(2)}</td>
+              <td>{h.latitudine}</td>
+              <td>{h.longitudine}</td>
               <td>
                 {h.immaginePrincipale ? (
                   <img
@@ -332,6 +342,28 @@ function AdminHotelManagementPage() {
                 required
                 onChange={onFormChange}
                 value={formData.prezzoNotte}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Latitudine</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.0001"
+                name="latitudine"
+                required
+                onChange={onFormChange}
+                value={formData.latitudine}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Longitudine</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.0001"
+                name="longitudine"
+                required
+                onChange={onFormChange}
+                value={formData.longitudine}
               />
             </Form.Group>
             <Form.Group controlId="formFileMultiple" className="mb-3">
